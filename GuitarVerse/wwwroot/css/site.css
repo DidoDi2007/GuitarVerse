@@ -1,6 +1,9 @@
 ﻿/* =========================================
    1. GLOBAL STYLES (Основни настройки)
    ========================================= */
+/* =========================================
+   STICKY FOOTER FIX (Гарантирано)
+   ========================================= */
 
 html, body {
     height: 100%;
@@ -200,38 +203,6 @@ header.fixed-top {
 .highlight-hover:hover {
     color: #e74c3c !important;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*До тук е за /_Layout.cshtml*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -2026,89 +1997,4 @@ textarea.form-control {
 /* 2. Гарантираме дясна рамка за първата колона (Етикетите) */
 .label-cell {
     border-right: 1px solid #333 !important; /* ТОВА СЪЗДАВА ЛИПСВАЩАТА ЧЕРТА */
-}
-
-
-/* =========================================
-   14. MOBILE RESPONSIVE TWEAKS (Оптимизация)
-   ========================================= */
-
-@media (max-width: 991px) {
-    /* 1. Намаляваме мястото за хедъра на мобилен */
-    body {
-        padding-top: 80px;
-    }
-
-    .main-content {
-        padding-top: 80px;
-    }
-
-    /* 2. Оправяне на логото да е по-малко */
-    .logo-text {
-        font-size: 1.5rem;
-    }
-
-    /* 3. На мобилен телефон Dropdown-ите се разпъват надолу (акордеон стил) */
-    .dropdown-menu-custom {
-        position: static !important;
-        box-shadow: none !important;
-        border: none !important;
-        background-color: #111 !important;
-        padding: 10px !important;
-        width: 100% !important;
-        display: none;
-    }
-
-    /* Показваме ги при клик на телефон */
-    .dropdown-hover:hover .dropdown-menu-custom,
-    .dropdown-hover:focus-within .dropdown-menu-custom {
-        display: block;
-        animation: none; /* Спираме анимацията на телефон, за да не сече */
-    }
-
-    /* 4. Линковете в мобилното меню */
-    .nav-links .nav-link {
-        font-size: 1.1rem;
-        padding: 15px 0;
-        border-bottom: 1px solid #222;
-        display: flex;
-        justify-content: space-between;
-    }
-}
-
-/* Изключително малки екрани (Само телефони) */
-@media (max-width: 767px) {
-    /* Текстът на футъра да се центрира */
-    .footer-minimal .text-start,
-    .footer-minimal .text-end {
-        text-align: center !important;
-    }
-
-    .footer-links-min {
-        margin-top: 15px;
-    }
-
-    /* Смаляване на лентата за бисквитки */
-    .cookie-banner h5 {
-        font-size: 1.1rem;
-    }
-
-    .cookie-text {
-        font-size: 0.9rem;
-    }
-
-    #acceptCookiesBtn {
-        width: 100%;
-        margin-top: 15px;
-    }
-
-    /* Сравнението да се събира на екрана */
-    .compare-popup {
-        width: 100%;
-        min-width: 100%;
-        right: 0;
-        left: 0;
-        transform: none;
-        border-radius: 12px 12px 0 0;
-    }
 }
