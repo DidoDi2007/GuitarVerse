@@ -4,7 +4,7 @@
     ViewData["Title"] = "Home Page";
 
     // Тук дефинираме снимката. По-късно този линк ще идва от Базата Данни (Model.HeroImage)
-    var heroImage = "/images/mainpage/jackson3.jpg";
+    var heroImage = "/images/mainpage/b202e464-07a2-49e3-a962-23d8de41c5c9.jpg";
 }
 
 <!-- 1. HERO SECTION -->
@@ -20,18 +20,18 @@
             Built for speed and performance. Experience the next chapter in the legacy of metal.
         </p>
         <div class="d-flex justify-content-center gap-3 mb-4">
-            <form method="post" asp-controller="Cart" asp-action="AddToCart">
-                <input type="hidden" name="productId" value="1" />
-                <input type="hidden" name="quantity" value="1" />
+            <form method="post" asp-controller="Shop" asp-action="Details" asp-route-id="1">
+                @* <input type="hidden" name="productId" value="1" />
+                <input type="hidden" name="quantity" value="1" /> *@
 
                 <button type="submit" class="btn btn-light btn-lg rounded-0 px-5 fw-bold text-uppercase shadow-lg">
-                    ADD TO CART
+                    VIEW DETAILS
                 </button>
             </form>
 
-            <a asp-controller="Shop" asp-action="Details" asp-route-id="1" class="btn btn-outline-light btn-lg rounded-0 px-5 text-uppercase pt-2 shadow-lg" style="background-color: rgba(0,0,0,0.5);">
+            @* <a asp-controller="Shop" asp-action="Details" asp-route-id="1" class="btn btn-outline-light btn-lg rounded-0 px-5 text-uppercase pt-2 shadow-lg" style="background-color: rgba(0,0,0,0.5);">
                 VIEW DETAILS
-            </a>
+            </a> *@
 
         </div>
     </div>
@@ -143,3 +143,20 @@
         }
     </div>
 </div>
+
+<!-- GUEST WELCOME TOAST -->
+@if (Context.Session.GetInt32("UserID") == null)
+{
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="loginToast" class="toast align-items-center text-white bg-dark border-secondary" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <strong class="text-warning">Welcome, Guest!</strong><br>
+                    <a href="@Url.Action("Login", "Account")" class="text-white text-decoration-underline">Log in</a>
+                    to save your profile & track orders.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+}

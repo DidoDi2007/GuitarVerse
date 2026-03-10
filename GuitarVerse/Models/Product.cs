@@ -17,12 +17,12 @@
         public string? ImagePath { get; set; }
 
         // --- НОВИ ПОЛЕТА ---
-        public string Orientation { get; set; } = "Right-Handed";
-        public int NumberOfStrings { get; set; } = 6;
-        public string BridgeType { get; set; } = "Fixed";
-        public string PickupType { get; set; } = "Passive";
+        public string? Orientation { get; set; }  // Може и да махнеш default стойността
+        public int? NumberOfStrings { get; set; } = 6;
+        public string? BridgeType { get; set; } 
+        public string? PickupType { get; set; }
         public string? SpecsText { get; set; } // <--- НОВО
-
+        public string? SubType { get; set; } // <--- НОВО
         public int? ArtistID { get; set; }
         public Artist? Artist { get; set; }
         public ICollection<Review> Reviews { get; set; }

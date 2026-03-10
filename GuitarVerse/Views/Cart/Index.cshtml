@@ -2,6 +2,12 @@
 
 @{
     ViewData["Title"] = "Shopping Cart";
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-warning text-center mt-3">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i> @TempData["Error"]
+        </div>
+    }
 }
 
 <div class="cart-wrapper">
@@ -48,20 +54,36 @@
                                 <!-- Quantity -->
                                 <td class="cart-cell text-center" style="width: 140px;">
                                     <div class="d-flex align-items-center justify-content-center gap-2">
+
+                                        <!-- MINUS BUTTON -->
                                         <form method="post" asp-action="UpdateQuantity">
                                             <input type="hidden" name="cartItemId" value="@item.CartItemID" />
                                             <input type="hidden" name="change" value="-1" />
-                                            <button type="submit" class="quantity-btn"><i class="fa-solid fa-minus"></i></button>
+                                            <!-- Ако е 1, правим минуса сив, за да не стане 0 -->
+                                            <button type="submit" class="quantity-btn" @(item.Quantity <= 1 ? "disabled style='opacity:0.5'" : "")>
+                                                <i class="fa-solid fa-minus"></i>
+                                            </button>
                                         </form>
 
                                         <span class="fw-bold">@item.Quantity</span>
 
+                                        <!-- PLUS BUTTON -->
                                         <form method="post" asp-action="UpdateQuantity">
                                             <input type="hidden" name="cartItemId" value="@item.CartItemID" />
                                             <input type="hidden" name="change" value="1" />
-                                            <button type="submit" class="quantity-btn"><i class="fa-solid fa-plus"></i></button>
+
+                                            <!-- ВАЖНО: Ако количеството е равно на Stock, правим бутона disable -->
+                                            <button type="submit" class="quantity-btn" @(item.Quantity >= item.Product.Stock ? "disabled style='opacity:0.5; cursor:not-allowed;'" : "")>
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
                                         </form>
                                     </div>
+
+                                    <!-- Показваме съобщение, ако е достигнат лимита -->
+                                    @if (item.Quantity >= item.Product.Stock)
+                                    {
+                                        <div class="text-danger small mt-1" style="font-size: 0.7rem;">Max stock reached</div>
+                                    }
                                 </td>
 
                                 <!-- Remove -->

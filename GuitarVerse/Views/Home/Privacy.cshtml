@@ -1,6 +1,32 @@
 ﻿@{
     ViewData["Title"] = "Privacy Policy";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<div class="container my-5 text-white" style="max-width: 800px;">
+    <h1 class="fw-bold mb-4">Privacy Policy</h1>
+    <p class="text-muted">Last updated: @DateTime.Now.ToString("MMMM dd, yyyy")</p>
+
+    <hr class="border-secondary my-4">
+
+    <h4>1. Data Collection</h4>
+    <p class="text-muted">
+        At GuitarVerse, we respect your privacy. We collect only the information necessary to process your orders,
+        such as your name, shipping address, and email. We do not store your credit card details;
+        payments are processed securely via <strong>Stripe</strong>.
+    </p>
+
+    <h4 class="mt-4">2. Cookies</h4>
+    <p class="text-muted">
+        We use cookies to improve your shopping experience. Specifically:
+        <ul>
+            <li><strong>Session Cookies:</strong> To keep you logged in.</li>
+            <li><strong>Guest Cart:</strong> To remember your shopping cart items even if you are not registered.</li>
+        </ul>
+    </p>
+
+    <h4 class="mt-4">3. Contact</h4>
+    <p class="text-muted">
+        If you have any questions regarding your data or want to request account deletion,
+        please contact us via our <a asp-controller="Support" asp-action="Contact" class="text-white text-decoration-underline">Support Page</a>.
+    </p>
+</div>

@@ -1,0 +1,24 @@
+﻿@{
+    ViewData["Title"] = "404 - Not Found";
+}
+
+<div class="error-page">
+    <div>
+        <div class="error-icon">
+            <i class="fa-solid fa-guitar-electric" style="transform: rotate(45deg);"></i>
+            <i class="fa-solid fa-bolt"></i> <!-- Счупване -->
+        </div>
+
+        <div class="error-code">404</div>
+
+        <h2 class="text-uppercase fw-bold mb-3">Wrong Note!</h2>
+        <p class="text-muted mb-5" style="font-size: 1.1rem;">
+            The page you are looking for seems to be out of tune or doesn't exist.<br>
+            Let's get you back to the main stage.
+        </p>
+
+        <a href="@Url.Action("Index", "Home")" class="btn btn-home">
+            Back to Home
+        </a>
+    </div>
+</div>

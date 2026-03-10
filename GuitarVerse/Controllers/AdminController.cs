@@ -115,9 +115,31 @@ namespace GuitarVerse.Controllers
 
             if (ModelState.IsValid)
             {
+                // --- НОВО: ЛОГИКА ЗА ИЗЧИСТВАНЕ НА ГРЕШНИ ДАННИ ---
+                // 1. Намираме името на категорията от базата
+                var category = await _context.Categories.FindAsync(model.Product.CategoryID);
+                string catName = category?.Name.ToLower() ?? "";
+
+                // 2. Проверяваме дали НЕ Е китара (т.е. е Усилвател или Аксесоар)
+                if (!catName.Contains("guitar") && !catName.Contains("bass"))
+                {
+                    // Нулираме китарните спецификации, за да не се записват глупости
+                    model.Product.NumberOfStrings = null;
+                    model.Product.Orientation = null;
+                    model.Product.PickupType = null;
+                    model.Product.BridgeType = null;
+                }
+                else
+                {
+                    // Ако Е китара -> Нулираме SubType (ако случайно е останало нещо)
+                    model.Product.SubType = null;
+                }
+                // --------------------------------------------------
+
+
                 string wwwRootPath = _hostEnvironment.WebRootPath;
 
-                // 1. ЗАПИСВАНЕ НА ГЛАВНАТА СНИМКА
+                // 3. ЗАПИСВАНЕ НА ГЛАВНАТА СНИМКА
                 if (model.ImageFile != null)
                 {
                     string fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.ImageFile.FileName);
@@ -134,21 +156,18 @@ namespace GuitarVerse.Controllers
                     model.Product.ImagePath = "https://placehold.co/400";
                 }
 
-                // --- ЗАЩИТА: ПОЧИСТВАНЕ НА HTML (XSS) ---
+                // 4. ЗАЩИТА: ПОЧИСТВАНЕ НА HTML (XSS)
                 if (!string.IsNullOrEmpty(model.Product.Overview))
                 {
                     var sanitizer = new HtmlSanitizer();
-                    // Това маха <script> и оставя само безопасни тагове
                     model.Product.Overview = sanitizer.Sanitize(model.Product.Overview);
                 }
-                // ----------------------------------------
 
-
-                // Първо записваме продукта, за да получим ID
+                // 5. ЗАПИСВАНЕ НА ПРОДУКТА (Взимаме ID)
                 _context.Products.Add(model.Product);
                 await _context.SaveChangesAsync();
 
-                // 2. ЗАПИСВАНЕ НА ГАЛЕРИЯТА (НОВА ЛОГИКА)
+                // 6. ЗАПИСВАНЕ НА ГАЛЕРИЯТА (Ако има)
                 if (model.GalleryFiles != null && model.GalleryFiles.Count > 0)
                 {
                     foreach (var file in model.GalleryFiles)
@@ -161,16 +180,14 @@ namespace GuitarVerse.Controllers
                             await file.CopyToAsync(stream);
                         }
 
-                        // Създаваме запис в таблицата ProductImages
                         var productImage = new ProductImage
                         {
-                            ProductID = model.Product.ProductID, // Вече имаме ID-то
+                            ProductID = model.Product.ProductID,
                             ImagePath = "/images/products/" + galleryFileName
                         };
                         _context.ProductImages.Add(productImage);
                     }
 
-                    // Записваме и картинките в базата
                     await _context.SaveChangesAsync();
                 }
 
@@ -333,29 +350,55 @@ namespace GuitarVerse.Controllers
 
             if (ModelState.IsValid)
             {
-                // Намираме съществуващия продукт в базата
                 var productToUpdate = await _context.Products.FindAsync(id);
                 if (productToUpdate == null) return NotFound();
 
-                // Обновяваме текстовите полета
+                // 1. Взимаме името на избраната категория, за да знаем какво да правим
+                var category = await _context.Categories.FindAsync(model.Product.CategoryID);
+                string catName = category.Name.ToLower();
+
+                // 2. Общи полета (винаги се обновяват)
                 productToUpdate.Brand = model.Product.Brand;
                 productToUpdate.Name = model.Product.Name;
                 productToUpdate.CategoryID = model.Product.CategoryID;
                 productToUpdate.Price = model.Product.Price;
                 productToUpdate.Stock = model.Product.Stock;
-                productToUpdate.NumberOfStrings = model.Product.NumberOfStrings;
-                productToUpdate.Orientation = model.Product.Orientation;
-                productToUpdate.PickupType = model.Product.PickupType;
-                productToUpdate.BridgeType = model.Product.BridgeType;
                 productToUpdate.Description = model.Product.Description;
                 productToUpdate.Overview = model.Product.Overview;
                 productToUpdate.SpecsText = model.Product.SpecsText;
                 productToUpdate.ArtistID = model.Product.ArtistID;
 
-                string wwwRootPath = _hostEnvironment.WebRootPath;
+                // 3. УМНА ЛОГИКА ЗА СПЕЦИФИКИТЕ
+
+                if (catName.Contains("guitar") || catName.Contains("bass"))
+                {
+                    // АКО Е КИТАРА: Запазваме спецификациите, трием SubType
+                    productToUpdate.NumberOfStrings = model.Product.NumberOfStrings;
+                    productToUpdate.Orientation = model.Product.Orientation;
+                    productToUpdate.PickupType = model.Product.PickupType;
+                    productToUpdate.BridgeType = model.Product.BridgeType;
+
+                    productToUpdate.SubType = null; // Китара няма SubType (освен ако не решиш друго)
+                }
+                else
+                {
+                    // АКО Е УСИЛВАТЕЛ ИЛИ АКСЕСОАР:
+                    // 1. Запазваме SubType (ТУК БЕШЕ ПРОБЛЕМЪТ, ЧЕ ЛИПСВАШЕ)
+                    productToUpdate.SubType = model.Product.SubType;
+
+                    // 2. Нулираме китарните спецификации
+                    productToUpdate.NumberOfStrings = null;
+                    productToUpdate.Orientation = null;
+                    productToUpdate.PickupType = null;
+                    productToUpdate.BridgeType = null;
+                }
+
+
+
 
                 // --- ЛОГИКА ЗА ГЛАВНАТА СНИМКА ---
                 // Само ако има качен нов файл, сменяме старата снимка
+                string wwwRootPath = _hostEnvironment.WebRootPath;
                 if (model.ImageFile != null)
                 {
                     // (Опционално: Тук можеш да изтриеш стария файл от диска, за да не се трупат)

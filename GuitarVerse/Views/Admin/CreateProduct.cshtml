@@ -24,13 +24,23 @@
                     <input asp-for="Product.Name" class="form-control" placeholder="e.g. Player Stratocaster" required />
                 </div>
 
+                <!-- 1. CATEGORY (ID: Product_CategoryID) -->
                 <div class="col-md-4">
                     <label class="form-label fw-bold">Category</label>
-                    <select asp-for="Product.CategoryID" class="form-select">
+                    <select asp-for="Product.CategoryID" class="form-select" id="Product_CategoryID">
                         @foreach (var cat in Model.Categories)
                         {
                             <option value="@cat.CategoryID">@cat.Name</option>
                         }
+                    </select>
+                </div>
+
+                <!-- 2. SUB-TYPE (ID: subTypeContainer, subTypeSelect) -->
+                <div class="col-md-4" id="subTypeContainer" style="display:none;">
+                    <label class="form-label fw-bold">Sub-Type</label>
+                    <select asp-for="Product.SubType" class="form-select" id="subTypeSelect">
+                        <option value="">-- Select Type --</option>
+                        <!-- Опциите ще се генерират от скрипта -->
                     </select>
                 </div>
 
@@ -66,33 +76,35 @@
             </div>
 
             <!-- Спецификации -->
-            <h5 class="text-uppercase text-muted mb-3 border-bottom pb-2 mt-4">Specifications</h5>
-            <div class="row g-3 mb-4">
-                <div class="col-md-3">
-                    <label class="form-label text-muted small">Strings</label>
-                    <input asp-for="Product.NumberOfStrings" type="number" class="form-control" value="6" />
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label text-muted small">Orientation</label>
-                    <select asp-for="Product.Orientation" class="form-select">
-                        <option>Right-Handed</option>
-                        <option>Left-Handed</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label text-muted small">Pickups</label>
-                    <select asp-for="Product.PickupType" class="form-select">
-                        <option>Passive</option>
-                        <option>Active</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label text-muted small">Bridge</label>
-                    <select asp-for="Product.BridgeType" class="form-select">
-                        <option>Fixed</option>
-                        <option>Tremolo</option>
-                        <option>Floyd Rose</option>
-                    </select>
+            <div id="guitarSpecsContainer">
+                <h5 class="text-uppercase text-muted mb-3 border-bottom pb-2 mt-4">Specifications</h5>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <label class="form-label text-muted small">Strings</label>
+                        <input asp-for="Product.NumberOfStrings" type="number" class="form-control" value="6" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label text-muted small">Orientation</label>
+                        <select asp-for="Product.Orientation" class="form-select">
+                            <option>Right-Handed</option>
+                            <option>Left-Handed</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label text-muted small">Pickups</label>
+                        <select asp-for="Product.PickupType" class="form-select">
+                            <option>Passive</option>
+                            <option>Active</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label text-muted small">Bridge</label>
+                        <select asp-for="Product.BridgeType" class="form-select">
+                            <option>Fixed</option>
+                            <option>Tremolo</option>
+                            <option>Floyd Rose</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -153,3 +165,79 @@
         </div>
     </form>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // 1. Дефиниране на елементите
+            const categorySelect = document.getElementById("Product_CategoryID");
+            const guitarSpecs = document.getElementById("guitarSpecsContainer");
+            const subTypeContainer = document.getElementById("subTypeContainer");
+            const subTypeSelect = document.getElementById("subTypeSelect");
+
+            // 2. Дефиниране на опциите
+            const subTypes = {
+                "amp": ["Combo Amp", "Amp Head", "Cabinet", "Processor"],
+                "accessory": ["Strings", "Picks", "Cables", "Case", "Strap", "Stand"]
+            };
+
+            // 3. Взимаме текущата стойност от Базата (ако е Edit)
+            // Тъй като сме вътре в CSHTML, можем да ползваме @Model
+            const savedSubType = "@Html.Raw(Model.Product?.SubType ?? "")";
+
+            function toggleFields() {
+                // Взимаме избрания текст и го правим на малки букви (напр. "Electric Guitars" -> "electric guitars")
+                const selectedText = categorySelect.options[categorySelect.selectedIndex].text.toLowerCase();
+
+                // Нулираме
+                guitarSpecs.style.display = "none";
+                subTypeContainer.style.display = "none";
+
+                // Логика
+                if (selectedText.includes("guitar") || selectedText.includes("bass")) {
+                    // АКО Е КИТАРА
+                    guitarSpecs.style.display = "block";
+                }
+                else if (selectedText.includes("amp")) {
+                    // АКО Е УСИЛВАТЕЛ
+                    subTypeContainer.style.display = "block";
+                    updateSubMenu(subTypes["amp"]);
+                }
+                else if (selectedText.includes("accessori") || selectedText.includes("accessory")) {
+                    // АКО Е АКСЕСОАР
+                    subTypeContainer.style.display = "block";
+                    updateSubMenu(subTypes["accessory"]);
+                }
+            }
+
+            // Функция за пълнене на менюто
+            function updateSubMenu(items) {
+                // Изчистваме старите опции
+                subTypeSelect.innerHTML = '<option value="">-- Select Type --</option>';
+
+                items.forEach(item => {
+                    const option = document.createElement("option");
+                    option.value = item;
+                    option.text = item;
+
+                    // ПРОВЕРКА: Ако това е запазената стойност, избираме я
+                    if (item === savedSubType) {
+                        option.selected = true;
+                    }
+
+                    subTypeSelect.appendChild(option);
+                });
+            }
+
+            // Слушател за промяна
+            categorySelect.addEventListener("change", function() {
+                // Ако сменим категорията ръчно, не искаме да се избира старата стойност автоматично
+                // (освен ако логиката не го изисква, но тук е по-чисто така)
+                toggleFields();
+            });
+
+            // Първоначално стартиране
+            toggleFields();
+        });
+    </script>
+}

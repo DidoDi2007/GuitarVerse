@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - GuitarVerse</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <!-- GuitarVerse Favicon (SVG Code) -->
+    <!-- GuitarVerse Favicon (Centered G) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23000000%22 /><text x=%2250%22 y=%2254%22 font-size=%2270%22 font-weight=%22900%22 font-family=%22Arial, sans-serif%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%23ffffff%22>G</text></svg>">
     <!-- FontAwesome за иконите -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -38,16 +41,28 @@
                 <div class="user-actions d-flex align-items-center">
 
                     <!-- Profile / Login Logic -->
-                    @if (Context.Session.GetInt32("UserID") != null)
+                    @{
+                        var userId = Context.Session.GetInt32("UserID");
+                        var isLogged = userId != null;
+                    }
+
+                    @if (isLogged)
                     {
-                        <a href="@Url.Action("Index", "Profile")" class="icon-link me-3" title="My Profile">
-                            <i class="fa-regular fa-user"></i>
+                        <!-- ЛОГНАТ ПОТРЕБИТЕЛ -->
+                        <a href="@Url.Action("Index", "Profile")" class="icon-link me-3 position-relative" title="My Profile">
+                            <i class="fa-solid fa-user"></i> <!-- Плътна икона -->
+                            <!-- Зелена точка за статус -->
+                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-success border border-dark rounded-circle"
+                                  style="width: 10px; height: 10px;">
+                                <span class="visually-hidden">Logged In</span>
+                            </span>
                         </a>
                     }
                     else
                     {
+                        <!-- ГОСТ (НЕЛОГНАТ) -->
                         <a href="@Url.Action("Login", "Account")" class="icon-link me-3" title="Login / Register">
-                            <i class="fa-regular fa-user"></i>
+                            <i class="fa-regular fa-user"></i> <!-- Куха икона -->
                         </a>
                     }
 
@@ -117,10 +132,11 @@
                             ACCESSORIES <i class="fa-solid fa-chevron-down text-muted"></i>
                         </a>
                         <div class="dropdown-menu-custom">
-                            <!-- Търсене на конкретни думи в категория Аксесоари -->
-                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="5" asp-route-query="Strings">Strings</a>
-                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="5" asp-route-query="Picks">Picks</a>
-                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="5" asp-route-query="Cables">Cables</a>
+                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="5" asp-route-subType="Strings">Strings</a>
+                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="5" asp-route-subType="Picks">Picks</a>
+                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="5" asp-route-subType="Cables">Cables</a>
+                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="5" asp-route-subType="Strap">Straps</a>
+                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="5" asp-route-subType="Case">Cases</a>
                         </div>
                     </li>
 
@@ -131,8 +147,10 @@
                             AMPS <i class="fa-solid fa-chevron-down text-muted"></i>
                         </a>
                         <div class="dropdown-menu-custom">
-                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="4" asp-route-query="Combo">Combo Amps</a>
-                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="4" asp-route-query="Head">Heads & Cabinets</a>
+                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="4" asp-route-subType="Combo Amp">Combo Amps</a>
+                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="4" asp-route-subType="Amp Head">Heads</a>
+                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="4" asp-route-subType="Cabinet">Cabinets</a>
+                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="4" asp-route-subType="Processor">Processors</a>
                         </div>
                     </li>
 

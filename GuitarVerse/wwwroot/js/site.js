@@ -285,4 +285,21 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
-        
+
+
+
+// ------------------------------
+// Нотификация да се влезе в профила
+// ------------------------------
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Проверяваме дали вече сме го показвали в тази сесия (за да не досаждаме)
+    if (!sessionStorage.getItem("welcomeToastShown")) {
+        var toastEl = document.getElementById('loginToast');
+        var toast = new bootstrap.Toast(toastEl, { delay: 10000 }); // Скрива се след 10 сек
+        toast.show();
+
+        // Записваме, че е показан
+        sessionStorage.setItem("welcomeToastShown", "true");
+    }
+});

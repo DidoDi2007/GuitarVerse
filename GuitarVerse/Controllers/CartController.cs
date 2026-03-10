@@ -184,14 +184,37 @@ namespace GuitarVerse.Controllers
 
         // 4. ПРОМЯНА НА БРОЙКАТА
         [HttpPost]
+        // 4. ПРОМЯНА НА БРОЙКАТА (+/-)
+        [HttpPost]
         public async Task<IActionResult> UpdateQuantity(int cartItemId, int change)
         {
-            var item = await _context.CartItems.FindAsync(cartItemId);
+            // ВАЖНО: Добавяме .Include(c => c.Product), за да видим Stock
+            var item = await _context.CartItems
+                .Include(c => c.Product)
+                .FirstOrDefaultAsync(c => c.CartItemID == cartItemId);
+
             if (item != null)
             {
-                item.Quantity += change;
-                if (item.Quantity < 1) item.Quantity = 1;
+                int newQuantity = item.Quantity + change;
 
+                // 1. Проверка за минимум (не може по-малко от 1)
+                if (newQuantity < 1)
+                {
+                    // Ако искаш при 0 да се трие, ползвай Remove(cartItemId). 
+                    // Засега просто не правим нищо.
+                    return RedirectToAction("Index");
+                }
+
+                // 2. ПРОМЕРКА ЗА МАКСИМУМ (STOCK)
+                if (newQuantity > item.Product.Stock)
+                {
+                    // Ако клиентът иска повече, отколкото имаме - показваме грешка
+                    TempData["Error"] = $"Sorry, only {item.Product.Stock} items available in stock!";
+                    return RedirectToAction("Index");
+                }
+
+                // Ако всичко е наред, обновяваме
+                item.Quantity = newQuantity;
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction("Index");

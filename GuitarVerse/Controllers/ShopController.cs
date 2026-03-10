@@ -19,6 +19,7 @@ namespace GuitarVerse.Controllers
 
         public async Task<IActionResult> Index(
             int? categoryId,
+             string subType,
             string[] selectedBrands,
             string query,
             string sortOrder,
@@ -30,6 +31,13 @@ namespace GuitarVerse.Controllers
             // 1. Филтриране
             if (categoryId.HasValue)
                 productsQuery = productsQuery.Where(p => p.CategoryID == categoryId.Value);
+
+            // --- НОВА ФИЛТРАЦИЯ ---
+            if (!string.IsNullOrEmpty(subType))
+            {
+                productsQuery = productsQuery.Where(p => p.SubType == subType);
+            }
+            // ----------------------
 
             if (selectedBrands != null && selectedBrands.Length > 0)
             {
@@ -72,7 +80,8 @@ namespace GuitarVerse.Controllers
                 SelectedOrientation = orientation,
                 SelectedStrings = strings,
                 SelectedBridge = bridge,
-                SelectedPickup = pickup
+                SelectedPickup = pickup,
+                 SelectedSubType = subType
             };
 
             // 2. АКО Е AJAX ЗАЯВКА -> ВРЪЩАМЕ JSON

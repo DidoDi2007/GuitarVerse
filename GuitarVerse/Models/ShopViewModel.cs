@@ -21,7 +21,7 @@ namespace GuitarVerse.Models
         // Нови филтри (засега единичен избор за простота, или range)
         public decimal? MinPrice { get; set; }
         public decimal? MaxPrice { get; set; }
-
+        public string SelectedSubType { get; set; }
         public string SelectedOrientation { get; set; }
         public int? SelectedStrings { get; set; }
         public string SelectedBridge { get; set; }

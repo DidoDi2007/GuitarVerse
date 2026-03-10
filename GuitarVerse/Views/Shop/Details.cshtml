@@ -96,13 +96,60 @@
                     Back to Shop
                 </a>
 
-                <ul class="list-unstyled feature-list">
-                    <li><div class="feature-icon"><i class="fa-solid fa-guitar"></i></div> <strong>Body:</strong>&nbsp; @(Model.Category?.Name ?? "Electric")</li>
-                    <li><div class="feature-icon"><i class="fa-solid fa-hand"></i></div> <strong>Orientation:</strong>&nbsp; @Model.Orientation</li>
-                    <li><div class="feature-icon"><i class="fa-solid fa-bolt"></i></div> <strong>Electronics:</strong>&nbsp; @Model.PickupType Pickups</li>
-                    <li><div class="feature-icon"><i class="fa-solid fa-music"></i></div> <strong>Strings:</strong>&nbsp; @Model.NumberOfStrings Strings</li>
-                    <li><div class="feature-icon"><i class="fa-solid fa-bridge"></i></div> <strong>Bridge:</strong>&nbsp; @Model.BridgeType</li>
+                <ul class="list-unstyled feature-list mt-4">
+
+                    <!-- 1. ОБЩИ ДАННИ -->
+                    <li>
+                        <div class="feature-icon"><i class="fa-solid fa-tag"></i></div>
+                        <strong>Brand:</strong>&nbsp; @Model.Brand
+                    </li>
+                    <li>
+                        <div class="feature-icon"><i class="fa-solid fa-barcode"></i></div>
+                        <strong>Model:</strong>&nbsp; @Model.Name
+                    </li>
+
+                    <!-- 2. ПРОВЕРКА: КИТАРА ЛИ Е? -->
+                    @if (Model.Category.Name.Contains("Guitar") || Model.Category.Name.Contains("Bass"))
+                    {
+                        <li>
+                            <div class="feature-icon"><i class="fa-solid fa-guitar"></i></div>
+                            <strong>Body:</strong>&nbsp; @Model.Category.Name
+                        </li>
+                        <li>
+                            <div class="feature-icon"><i class="fa-solid fa-hand"></i></div>
+                            <strong>Orientation:</strong>&nbsp; @Model.Orientation
+                        </li>
+                        <li>
+                            <div class="feature-icon"><i class="fa-solid fa-bolt"></i></div>
+                            <strong>Electronics:</strong>&nbsp; @Model.PickupType Pickups
+                        </li>
+                        <li>
+                            <div class="feature-icon"><i class="fa-solid fa-music"></i></div>
+                            <strong>Strings:</strong>&nbsp; @Model.NumberOfStrings Strings
+                        </li>
+                        <li>
+                            <div class="feature-icon"><i class="fa-solid fa-bridge"></i></div>
+                            <strong>Bridge:</strong>&nbsp; @Model.BridgeType
+                        </li>
+                    }
+                    else
+                    {
+                        <!-- 3. АКО НЕ Е КИТАРА (Усилвател/Аксесоар) -->
+                        <li>
+                            <div class="feature-icon"><i class="fa-solid fa-layer-group"></i></div>
+                            <strong>Category:</strong>&nbsp; @Model.Category.Name
+                        </li>
+
+                        @if (!string.IsNullOrEmpty(Model.SubType))
+                        {
+                            <li>
+                                <div class="feature-icon"><i class="fa-solid fa-filter"></i></div>
+                                <strong>Type:</strong>&nbsp; @Model.SubType
+                            </li>
+                        }
+                    }
                 </ul>
+                
             </div>
         </div>
 
@@ -144,18 +191,26 @@
                     <!-- SPECS TAB -->
                     <div class="tab-pane fade" id="specs">
                         <div class="row mt-4">
-                            <!-- ЛЯВО: Основните параметри (от падащите менюта) -->
+                            <!-- ЛЯВО: Основните параметри -->
                             <div class="col-md-5 mb-4">
                                 <h5 class="text-uppercase text-muted mb-3 border-bottom border-secondary pb-2">Key Features</h5>
+
                                 <table class="table table-borderless spec-table">
                                     <tbody>
                                         <tr><th>Brand</th><td>@Model.Brand</td></tr>
                                         <tr><th>Model</th><td>@Model.Name</td></tr>
                                         <tr><th>Category</th><td>@Model.Category?.Name</td></tr>
-                                        <tr><th>Orientation</th><td>@Model.Orientation</td></tr>
-                                        <tr><th>Strings</th><td>@Model.NumberOfStrings</td></tr>
-                                        <tr><th>Pickups</th><td>@Model.PickupType</td></tr>
-                                        <tr><th>Bridge</th><td>@Model.BridgeType</td></tr>
+
+                                        <!-- ПОКАЗВАМЕ ТЕЗИ САМО АКО Е КИТАРА -->
+                                        @if (Model.Category.Name.Contains("Guitar") || Model.Category.Name.Contains("Bass"))
+                                        {
+                                            <tr><th>Orientation</th><td>@Model.Orientation</td></tr>
+                                            <tr><th>Strings</th><td>@Model.NumberOfStrings</td></tr>
+                                            <tr><th>Pickups</th><td>@Model.PickupType</td></tr>
+                                            <tr><th>Bridge</th><td>@Model.BridgeType</td></tr>
+                                        }
+
+                                        <!-- АКО Е УСИЛВАТЕЛ ИЛИ ДРУГО - НЯМА ДА ИМА ИЗЛИШНИ РЕДОВЕ -->
                                     </tbody>
                                 </table>
                             </div>

@@ -1,6 +1,21 @@
 ﻿@model GuitarVerse.Models.ShopViewModel
 @{
     ViewData["Title"] = "Shop";
+
+    var currentCategoryName = "";
+    if (Model.CurrentCategoryId != null)
+    {
+        currentCategoryName = Model.Categories.FirstOrDefault(c => c.CategoryID == Model.CurrentCategoryId)?.Name;
+    }
+
+    // Проверяваме дали е китара (или ако сме на "All Products" - показваме всичко)
+    bool showGuitarFilters = string.IsNullOrEmpty(currentCategoryName) ||
+                             currentCategoryName.Contains("Guitar") ||
+                             currentCategoryName.Contains("Bass");
+
+    bool isAmps = currentCategoryName == "Amps";
+    bool isAccessories = currentCategoryName == "Accessories";
+
 }
 
 
@@ -80,44 +95,80 @@
                                 </div>
                             </div>
                         </div>
+                        @if (showGuitarFilters)
+                        {
+                            <!-- Orientation -->
 
-                        <!-- Orientation -->
-                        <div class="mb-4">
-                            <div class="sidebar-title">Orientation</div>
-                            <div class="form-check">
-                                <input class="form-check-input auto-submit" type="radio" name="orientation" value="Right-Handed" id="right" @(Model.SelectedOrientation == "Right-Handed" ? "checked" : "")>
-                                <label class="form-check-label" for="right">Right-Handed</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input auto-submit" type="radio" name="orientation" value="Left-Handed" id="left" @(Model.SelectedOrientation == "Left-Handed" ? "checked" : "")>
-                                <label class="form-check-label" for="left">Left-Handed</label>
-                            </div>
-                        </div>
-
-                        <!-- Number of Strings -->
-                        <div class="mb-4">
-                            <div class="sidebar-title">Number of Strings</div>
-                            @foreach (var str in new[] { 4, 5, 6, 7, 8 })
-                            {
+                            <div class="mb-4">
+                                <div class="sidebar-title">Orientation</div>
                                 <div class="form-check">
-                                    <input class="form-check-input auto-submit" type="radio" name="strings" value="@str" id="str-@str" @(Model.SelectedStrings == str ? "checked" : "")>
-                                    <label class="form-check-label" for="str-@str">@str Strings</label>
+                                    <input class="form-check-input auto-submit" type="radio" name="orientation" value="Right-Handed" id="right" @(Model.SelectedOrientation == "Right-Handed" ? "checked" : "")>
+                                    <label class="form-check-label" for="right">Right-Handed</label>
                                 </div>
-                            }
-                        </div>
+                                <div class="form-check">
+                                    <input class="form-check-input auto-submit" type="radio" name="orientation" value="Left-Handed" id="left" @(Model.SelectedOrientation == "Left-Handed" ? "checked" : "")>
+                                    <label class="form-check-label" for="left">Left-Handed</label>
+                                </div>
+                            </div>
 
-                        <!-- Electronics -->
-                        <div class="mb-4">
-                            <div class="sidebar-title">Electronics</div>
-                            <div class="form-check">
-                                <input class="form-check-input auto-submit" type="radio" name="pickup" value="Active" id="active" @(Model.SelectedPickup == "Active" ? "checked" : "")>
-                                <label class="form-check-label" for="active">Active Pickups</label>
+                            <!-- Number of Strings -->
+                            <div class="mb-4">
+                                <div class="sidebar-title">Number of Strings</div>
+                                @foreach (var str in new[] { 4, 5, 6, 7, 8 })
+                                {
+                                    <div class="form-check">
+                                        <input class="form-check-input auto-submit" type="radio" name="strings" value="@str" id="str-@str" @(Model.SelectedStrings == str ? "checked" : "")>
+                                        <label class="form-check-label" for="str-@str">@str Strings</label>
+                                    </div>
+                                }
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input auto-submit" type="radio" name="pickup" value="Passive" id="passive" @(Model.SelectedPickup == "Passive" ? "checked" : "")>
-                                <label class="form-check-label" for="passive">Passive Pickups</label>
+
+                            <!-- Electronics -->
+                            <div class="mb-4">
+                                <div class="sidebar-title">Electronics</div>
+                                <div class="form-check">
+                                    <input class="form-check-input auto-submit" type="radio" name="pickup" value="Active" id="active" @(Model.SelectedPickup == "Active" ? "checked" : "")>
+                                    <label class="form-check-label" for="active">Active Pickups</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input auto-submit" type="radio" name="pickup" value="Passive" id="passive" @(Model.SelectedPickup == "Passive" ? "checked" : "")>
+                                    <label class="form-check-label" for="passive">Passive Pickups</label>
+                                </div>
                             </div>
-                        </div>
+                        }
+
+
+                        <!-- НОВО: Филтри за УСИЛВАТЕЛИ -->
+                        @if (isAmps)
+                        {
+                            <div class="mb-4">
+                                <div class="sidebar-title">Amp Type</div>
+                                @foreach (var type in new[] { "Combo Amp", "Amp Head", "Cabinet", "Processor" })
+                                {
+                                    <div class="form-check">
+                                        <input class="form-check-input auto-submit" type="radio" name="subType" value="@type" id="type-@type" @(Model.SelectedSubType == type ? "checked" : "")>
+                                        <label class="form-check-label" for="type-@type">@type</label>
+                                    </div>
+                                }
+                            </div>
+                        }
+
+                        <!-- НОВО: Филтри за АКСЕСОАРИ -->
+                        @if (isAccessories)
+                        {
+                            <div class="mb-4">
+                                <div class="sidebar-title">Category</div>
+                                @foreach (var type in new[] { "Strings", "Picks", "Cables", "Strap", "Case" })
+                                {
+                                    <div class="form-check">
+                                        <input class="form-check-input auto-submit" type="radio" name="subType" value="@type" id="type-@type" @(Model.SelectedSubType == type ? "checked" : "")>
+                                        <label class="form-check-label" for="type-@type">@type</label>
+                                    </div>
+                                }
+                            </div>
+                        }
+
+
 
                         <a href="@Url.Action("Index", "Shop")" class="btn btn-outline-light w-100 mt-2 btn-sm">Clear All Filters</a>
                     </div>

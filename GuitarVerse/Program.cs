@@ -4,6 +4,7 @@ using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
@@ -49,8 +50,26 @@ app.UseRouting();
 app.UseSession(); // <- çàäúëæèòåëíî çà êîëè÷êàòà
 app.UseAuthorization();
 
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
+
+// --- ДОБАВИ ТОЗИ РЕД ТУК ---
+// Това прехваща грешките (като 404) и зарежда нашия екшън
+app.UseStatusCodePagesWithReExecute("/Home/PageNotFound");
+// ---------------------------
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+
 app.Run();
+
+

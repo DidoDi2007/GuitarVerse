@@ -1434,3 +1434,75 @@ textarea.form-control {
     .shop-card:hover {
         transform: translateY(-5px);
     }
+
+
+/* =========================================
+   12. Artists
+   ========================================= */
+
+
+.error-page {
+    background-color: #000;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #fff;
+    padding: 50px 20px;
+}
+
+.error-code {
+    font-size: 8rem;
+    font-weight: 900;
+    line-height: 1;
+    background: -webkit-linear-gradient(#fff, #666);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 20px;
+}
+
+.error-icon {
+    font-size: 4rem;
+    color: #c0392b; /* Червено */
+    margin-bottom: 20px;
+    animation: shake 0.5s infinite; /* Малка анимация */
+}
+
+/* Анимация за счупената китара */
+@keyframes shake {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(5deg);
+    }
+
+    50% {
+        transform: rotate(0eg);
+    }
+
+    75% {
+        transform: rotate(-5deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+.btn-home {
+    background-color: #fff;
+    color: #000;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 15px 40px;
+    border-radius: 0;
+    transition: transform 0.2s;
+}
+
+    .btn-home:hover {
+        transform: scale(1.05);
+        background-color: #ddd;
+    }
