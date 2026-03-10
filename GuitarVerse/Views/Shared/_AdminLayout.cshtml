@@ -1,6 +1,13 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    // Взимаме ролята директно от сесията
+    var userRole = HttpContextAccessor.HttpContext.Session.GetString("UserRole");
+    var isSuperAdmin = userRole == "superadmin"; // Проста проверка
+
     var currentAction = ViewContext.RouteData.Values["Action"]?.ToString();
 }
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -15,7 +22,7 @@
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
 </head>
 <body class="admin-body" style="padding-top: 0; background-color: #f4f6f9;">
-
+        
     <div class="admin-wrapper">
 
         <!-- SIDEBAR -->
@@ -34,6 +41,13 @@
                     <i class="fa-solid fa-guitar"></i> Products
                 </a>
 
+                @if (isSuperAdmin)
+                {
+                    <a href="@Url.Action("Users", "Admin")" class="nav-link @(currentAction == "Users" ? "active" : "")">
+                        <i class="fa-solid fa-users"></i> Users
+                    </a>
+                }
+
                 <a href="@Url.Action("Orders", "Admin")" class="nav-link @(currentAction == "Orders" ? "active" : "")">
                     <i class="fa-solid fa-box-open"></i> Orders
                 </a>
@@ -42,9 +56,7 @@
                     <i class="fa-solid fa-envelope"></i> Messages
                 </a>
 
-                <a href="@Url.Action("Users", "Admin")" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Users" ? "active" : "")">
-                    <i class="fa-solid fa-users"></i> Users
-                </a>
+                
 
 
 

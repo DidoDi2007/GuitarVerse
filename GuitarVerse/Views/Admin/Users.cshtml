@@ -3,7 +3,7 @@
     ViewData["Title"] = "Manage Users";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 
-    // Взимаме ID на текущия админ, за да скрием бутоните за него
+    // Взимаме ID на текущия админ
     var currentUserId = Context.Session.GetInt32("UserID");
 }
 
@@ -21,6 +21,7 @@
     <div class="card-body p-0">
         <table class="admin-table">
             <thead>
+                <!-- 6 КОЛОНИ В ХЕДЪРА -->
                 <tr>
                     <th>ID</th>
                     <th>Email</th>
@@ -31,10 +32,14 @@
                 </tr>
             </thead>
             <tbody>
+                <!-- ВАЖНО: Цикълът трябва да е ТУК, преди <tr> -->
                 @foreach (var user in Model)
                 {
                     <tr>
+                        <!-- 1. ID -->
                         <td>#@user.UserID</td>
+
+                        <!-- 2. EMAIL -->
                         <td>
                             <span class="fw-bold">@user.Email</span>
                             @if (user.UserID == currentUserId)
@@ -42,8 +47,14 @@
                                 <span class="badge bg-primary ms-2">YOU</span>
                             }
                         </td>
+
+                        <!-- 3. ROLE (Цветните баджове) -->
                         <td>
-                            @if (user.Role == "admin")
+                            @if (user.Role == "superadmin")
+                            {
+                                <span class="badge bg-warning text-dark"><i class="fa-solid fa-crown"></i> SUPER ADMIN</span>
+                            }
+                            else if (user.Role == "admin")
                             {
                                 <span class="badge bg-danger">ADMIN</span>
                             }
@@ -52,6 +63,8 @@
                                 <span class="badge bg-info text-dark">Customer</span>
                             }
                         </td>
+
+                        <!-- 4. VERIFIED -->
                         <td>
                             @if (user.IsEmailVerified)
                             {
@@ -62,17 +75,25 @@
                                 <span class="text-muted"><i class="fa-solid fa-circle-xmark"></i> No</span>
                             }
                         </td>
+
+                        <!-- 5. DATE -->
                         <td>@user.CreatedAt.ToShortDateString()</td>
 
+                        <!-- 6. ACTIONS -->
                         <td class="text-end">
-                            @if (user.UserID != currentUserId) // Крием бутоните за самия теб
+                            <!-- Ако е Супер Админ - не го пипаме -->
+                            @if (user.Role == "superadmin")
                             {
-                                <!-- Toggle Role Button -->
+                                <span class="text-muted small"><i class="fa-solid fa-shield"></i> Protected</span>
+                            }
+                            else if (user.UserID != currentUserId) // Ако не си ти самият
+                            {
+                                <!-- Бутон за смяна на роля -->
                                 <form asp-action="ToggleUserRole" method="post" style="display:inline;">
                                     <input type="hidden" name="id" value="@user.UserID" />
                                     @if (user.Role == "customer")
                                     {
-                                        <button type="submit" class="btn btn-sm btn-outline-success" title="Make Admin" onclick="return confirm('Make this user an Admin?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-success" title="Promote to Admin" onclick="return confirm('Make this user an Admin?');">
                                             <i class="fa-solid fa-arrow-up"></i>
                                         </button>
                                     }
@@ -84,10 +105,10 @@
                                     }
                                 </form>
 
-                                <!-- Delete Button -->
+                                <!-- Бутон за триене -->
                                 <form asp-action="DeleteUser" method="post" style="display:inline;">
                                     <input type="hidden" name="id" value="@user.UserID" />
-                                    <button type="submit" class="btn btn-sm btn-outline-danger ms-1" title="Delete User" onclick="return confirm('Are you sure? This will delete all their orders and data.');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger ms-1" title="Delete User" onclick="return confirm('Are you sure? This will delete all their data.');">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </form>

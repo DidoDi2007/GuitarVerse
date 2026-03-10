@@ -171,15 +171,19 @@ namespace GuitarVerse.Controllers
 
             if (user != null)
             {
-                // Изтриваме потребителя. 
-                // SQL ще изтрие автоматично: Reviews, CartItems, Customers, SupportMessages
+                // --- НОВА ЗАЩИТА ПО РОЛЯ ---
+                // Ако си Супер Админ, просто те връщаме в Security, без да трием нищо.
+                if (user.Role == "superadmin")
+                {
+                    return RedirectToAction("Security");
+                }
+                // ---------------------------
+
                 _context.Users.Remove(user);
                 await _context.SaveChangesAsync();
             }
 
-            // Изчистваме сесията (Logout)
             HttpContext.Session.Clear();
-
             return RedirectToAction("Index", "Home");
         }
     }

@@ -9,7 +9,7 @@ namespace GuitarVerse.Controllers
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly IWebHostEnvironment _hostEnvironment; // <--- НОВО
+        private readonly IWebHostEnvironment _hostEnvironment;
 
         public AdminController(ApplicationDbContext context, IWebHostEnvironment hostEnvironment)
         {
@@ -17,11 +17,20 @@ namespace GuitarVerse.Controllers
             _hostEnvironment = hostEnvironment;
         }
 
-        // --- ПРОВЕРКА ЗА АДМИН (извикваме я във всеки метод) ---
+        // --- МЕТОД 1: Проверка за достъп до Админ Панела ---
+        // (Важи за Dashboard, Products, Orders)
         private bool IsAdmin()
         {
             var role = HttpContext.Session.GetString("UserRole");
-            return role == "admin"; // Трябва да съвпада с това в базата (малки букви)
+            return role == "admin" || role == "superadmin"; // И двамата имат право
+        }
+
+        // --- МЕТОД 2: Проверка за Супер Админ ---
+        // (Важи само за Users Management - триене на хора и права)
+        private bool IsSuperAdmin()
+        {
+            var role = HttpContext.Session.GetString("UserRole");
+            return role == "superadmin"; // Само Шефът има право
         }
 
         // 1. DASHBOARD (Таблото)
@@ -436,61 +445,70 @@ namespace GuitarVerse.Controllers
         {
             if (!IsAdmin()) return RedirectToAction("Login", "Account");
 
+            // Само Супер Админ влиза тук. Обикновените админи ги връщаме.
+            if (!IsSuperAdmin()) return RedirectToAction("Dashboard");
+
             var users = await _context.Users
-                .OrderByDescending(u => u.CreatedAt) // Най-новите най-горе
+                .OrderByDescending(u => u.CreatedAt)
                 .ToListAsync();
 
             return View(users);
         }
 
-        // 2. ПРОМЯНА НА РОЛЯ (Admin <-> Customer)
+        // 2. ПРОМЯНА НА РОЛЯ
         [HttpPost]
         public async Task<IActionResult> ToggleUserRole(int id)
         {
             if (!IsAdmin()) return RedirectToAction("Login", "Account");
-
-            // ЗАЩИТА: Не позволяваме да променяш собствената си роля
-            var currentUserId = HttpContext.Session.GetInt32("UserID");
-            if (id == currentUserId)
-            {
-                TempData["Error"] = "You cannot change your own role!";
-                return RedirectToAction("Users");
-            }
+            if (!IsSuperAdmin()) return RedirectToAction("Dashboard"); // Защита
 
             var user = await _context.Users.FindAsync(id);
             if (user != null)
             {
-                // Ако е админ става клиент, ако е клиент става админ
+                // ЗАЩИТА: Не може да се пипа друг Супер Админ
+                if (user.Role == "superadmin")
+                {
+                    TempData["Error"] = "You cannot change the role of a Super Admin!";
+                    return RedirectToAction("Users");
+                }
+
+                // Защита: Не може да пипаш себе си
+                var currentUserId = HttpContext.Session.GetInt32("UserID");
+                if (id == currentUserId)
+                {
+                    TempData["Error"] = "You cannot change your own role!";
+                    return RedirectToAction("Users");
+                }
+
+                // Логика за смяна (Admin <-> Customer)
                 if (user.Role == "admin") user.Role = "customer";
-                else user.Role = "admin";
+                else if (user.Role == "customer") user.Role = "admin";
 
                 await _context.SaveChangesAsync();
             }
-
             return RedirectToAction("Users");
         }
 
-        // 3. ИЗТРИВАНЕ НА ПОТРЕБИТЕЛ
+        // 3. ИЗТРИВАНЕ
         [HttpPost]
         public async Task<IActionResult> DeleteUser(int id)
         {
             if (!IsAdmin()) return RedirectToAction("Login", "Account");
-
-            // ЗАЩИТА: Не позволяваме да изтриеш сам себе си
-            var currentUserId = HttpContext.Session.GetInt32("UserID");
-            if (id == currentUserId)
-            {
-                TempData["Error"] = "You cannot delete your own account!";
-                return RedirectToAction("Users");
-            }
+            if (!IsSuperAdmin()) return RedirectToAction("Dashboard"); // Защита
 
             var user = await _context.Users.FindAsync(id);
             if (user != null)
             {
+                // ЗАЩИТА: Не може да се трие Супер Админ
+                if (user.Role == "superadmin")
+                {
+                    TempData["Error"] = "FATAL: You cannot delete a Super Admin account!";
+                    return RedirectToAction("Users");
+                }
+
                 _context.Users.Remove(user);
                 await _context.SaveChangesAsync();
             }
-
             return RedirectToAction("Users");
         }
 

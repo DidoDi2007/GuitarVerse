@@ -23,6 +23,7 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+builder.Services.AddHttpContextAccessor();
 // Add Email Service
 builder.Services.AddScoped<GuitarVerse.Services.EmailService>();
 

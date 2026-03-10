@@ -146,6 +146,10 @@ namespace GuitarVerse.Controllers
             {
                 return RedirectToAction("Dashboard", "Admin"); // админ панел
             }
+            else if (user.Role.Equals("superadmin", StringComparison.OrdinalIgnoreCase))
+            {
+                return RedirectToAction("Dashboard", "Admin"); // админ панел
+            }
             else
             {
                 return RedirectToAction("Index", "Home"); // клиентската част

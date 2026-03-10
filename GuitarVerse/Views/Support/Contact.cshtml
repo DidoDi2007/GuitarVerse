@@ -1,0 +1,87 @@
+﻿@model GuitarVerse.Models.SupportMessage
+@{
+    ViewData["Title"] = "Contact Us";
+}
+
+<div class="container my-5" style="max-width: 800px;">
+
+    <div class="text-center mb-5 text-white">
+        <h1 class="fw-bold text-uppercase">Contact Support</h1>
+        <p class="text-muted">Have a question about gear? Order issue? We are here to help.</p>
+    </div>
+
+    @if (ViewBag.Success != null)
+    {
+        <div class="alert alert-success text-center mb-4">
+            <i class="fa-solid fa-check-circle me-2"></i> @ViewBag.Success
+        </div>
+    }
+
+    <div class="card bg-dark border-secondary text-white shadow-lg">
+        <div class="card-body p-5">
+            <form method="post">
+
+                <div class="row g-4">
+                    <!-- Name -->
+                    <div class="col-md-6">
+                        <label class="form-label text-muted text-uppercase small">Your Name</label>
+                        <input asp-for="SenderName" class="form-control bg-black text-white border-secondary" placeholder="John Doe" />
+                        <span asp-validation-for="SenderName" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-md-6">
+                        <label class="form-label text-muted text-uppercase small">Email Address</label>
+                        <input asp-for="SenderEmail" class="form-control bg-black text-white border-secondary" placeholder="john@example.com" />
+                        <span asp-validation-for="SenderEmail" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Subject -->
+                    <div class="col-12">
+                        <label class="form-label text-muted text-uppercase small">Subject</label>
+                        <select asp-for="Subject" class="form-select bg-black text-white border-secondary">
+                            <option>Order Status Inquiry</option>
+                            <option>Product Question</option>
+                            <option>Warranty / Return</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+
+                    <!-- Message -->
+                    <div class="col-12">
+                        <label class="form-label text-muted text-uppercase small">Message</label>
+                        <textarea asp-for="MessageText" class="form-control bg-black text-white border-secondary" rows="5" placeholder="How can we help?"></textarea>
+                        <span asp-validation-for="MessageText" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Button -->
+                    <div class="col-12 mt-4">
+                        <button type="submit" class="btn btn-light w-100 py-3 text-uppercase fw-bold rounded-0">
+                            Send Message <i class="fa-solid fa-paper-plane ms-2"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- Info Section -->
+    <div class="row text-center text-white mt-5">
+        <div class="col-md-4">
+            <i class="fa-solid fa-envelope fa-2x mb-3 text-danger"></i>
+            <h5>Email Us</h5>
+            <p class="text-muted">diyanpeychev26@itpg-varna.bg</p>
+        </div>
+        <div class="col-md-4">
+            <i class="fa-solid fa-phone fa-2x mb-3 text-danger"></i>
+            <h5>Call Us</h5>
+            <p class="text-muted">+359 888 123 456</p>
+        </div>
+        <div class="col-md-4">
+            <i class="fa-solid fa-clock fa-2x mb-3 text-danger"></i>
+            <h5>Working Hours</h5>
+            <p class="text-muted">Mon-Fri: 09:00 - 18:00</p>
+        </div>
+    </div>
+</div>
