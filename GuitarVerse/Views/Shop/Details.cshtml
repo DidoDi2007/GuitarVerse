@@ -248,99 +248,128 @@
                     <!-- REVIEWS TAB -->
                     <div class="tab-pane fade" id="reviews">
                         <div class="row mt-4">
-                            <div class="col-lg-8">
 
-                                <!-- Списък с ревюта -->
+                            <!-- ЛЯВО: СПИСЪК С РЕВЮТА -->
+                            <div class="col-lg-7 pe-lg-5">
+                                <h4 class="text-uppercase fw-bold mb-4 border-bottom border-secondary pb-2">Customer Reviews</h4>
+
                                 @if (Model.Reviews != null && Model.Reviews.Any())
                                 {
-                                    foreach (var review in Model.Reviews.OrderByDescending(r => r.CreatedAt))
+                                    var reviewsList = Model.Reviews.OrderByDescending(r => r.CreatedAt).ToList();
+
+                                    // Извеждаме всички ревюта
+                                    for (int i = 0; i < reviewsList.Count; i++)
                                     {
-                                        <div class="mb-4 pb-3 border-bottom border-secondary">
-                                            <div class="d-flex justify-content-between">
+                                        var review = reviewsList[i];
+                                        // Първите 2 са винаги видими. Останалите получават клас 'hidden-review'
+                                        string hiddenClass = (i >= 2) ? "hidden-review" : "";
+
+                                        <div class="review-item mb-4 pb-3 border-bottom border-dark @hiddenClass">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
                                                 <div>
-                                                    <!-- Звездички -->
-                                                    <div class="text-warning small mb-1">
-                                                        @for (int i = 1; i <= 5; i++)
+                                                    <!-- Звезди -->
+                                                    <div class="text-warning small">
+                                                        @for (int s = 1; s <= 5; s++)
                                                         {
-                                                            if (i <= review.Rating)
+                                                            if (s <= review.Rating)
                                                             {
                                                                 <i class="fa-solid fa-star"></i>
                                                             }
                                                             else
                                                             {
 
-                                                                <i class="fa-regular fa-star"></i>
+                                                                <i class="fa-regular fa-star text-muted"></i>
                                                             }
                                                         }
                                                     </div>
-                                                    <span class="fw-bold">@review.User.Email.Split('@')[0]</span> <!-- Показваме част от имейла като име -->
+                                                    <span class="fw-bold text-white">@review.User.Email.Split('@')[0]</span>
                                                 </div>
-                                                <small class="text-muted">@review.CreatedAt.ToShortDateString()</small>
+                                                <small class="text-muted">@review.CreatedAt.ToString("MMM dd, yyyy")</small>
                                             </div>
-                                            <!-- Добавихме класа 'review-text' -->
-                                            <p class="mt-2 text-light review-text">@review.Comment</p>
+                                            <p class="mt-2 text-light review-text mb-0" style="line-height: 1.6;">@review.Comment</p>
+                                        </div>
+                                    }
+
+                                    // Бутон SHOW MORE (само ако има повече от 2 ревюта)
+                                    @if (reviewsList.Count > 2)
+                                    {
+                                        <div class="text-center mt-4">
+                                            <button type="button" id="toggleReviewsBtn" class="btn-toggle-reviews">
+                                                Read All @reviewsList.Count Reviews <i class="fa-solid fa-chevron-down ms-2"></i>
+                                            </button>
                                         </div>
                                     }
                                 }
                                 else
                                 {
-                                    <p class="text-muted">No reviews yet. Be the first to write one!</p>
+                                    <div class="alert bg-dark border-secondary text-center py-5">
+                                        <i class="fa-regular fa-comment-dots fa-3x text-muted mb-3"></i>
+                                        <h5 class="text-white">No reviews yet.</h5>
+                                        <p class="text-muted mb-0">Be the first to share your thoughts about this gear!</p>
+                                    </div>
                                 }
+                            </div>
 
-                                <!-- Форма за добавяне (само ако е логнат) -->
-                                @if (Context.Session.GetInt32("UserID") != null)
-                                {
-                                    <div class="mt-5 p-4 bg-dark border border-secondary rounded">
-                                        <h5 class="text-uppercase mb-3">Write a Review</h5>
-                                        <form asp-action="AddReview" method="post">
-                                            <input type="hidden" name="productId" value="@Model.ProductID" />
+                            <!-- ДЯСНО: ФОРМА ЗА ПИСАНЕ (Sticky) -->
+                            <div class="col-lg-5 mt-5 mt-lg-0">
+                                <div class="sticky-review-form">
 
-                                            <div class="mb-3">
-                                                <label class="form-label text-muted small">Rating</label>
-                                                <div class="rating-css">
-                                                    <!-- Опростен избор на рейтинг -->
-                                                    <select name="rating" class="form-select bg-black text-white border-secondary" style="width: 150px;">
-                                                        <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
-                                                        <option value="4">⭐⭐⭐⭐ (4/5)</option>
-                                                        <option value="3">⭐⭐⭐ (3/5)</option>
-                                                        <option value="2">⭐⭐ (2/5)</option>
-                                                        <option value="1">⭐ (1/5)</option>
+                                    @if (Context.Session.GetInt32("UserID") != null)
+                                    {
+                                        <div class="p-4 bg-dark border border-secondary rounded shadow-sm">
+                                            <h5 class="text-uppercase fw-bold mb-3 border-bottom border-secondary pb-2">Write a Review</h5>
+
+                                            <form asp-action="AddReview" method="post">
+                                                <input type="hidden" name="productId" value="@Model.ProductID" />
+
+                                                <div class="mb-3">
+                                                    <label class="form-label text-muted small fw-bold text-uppercase">Rating</label>
+                                                    <select name="rating" class="form-select bg-black text-white border-secondary">
+                                                        <option value="5">⭐⭐⭐⭐⭐ (5/5) - Excellent</option>
+                                                        <option value="4">⭐⭐⭐⭐ (4/5) - Very Good</option>
+                                                        <option value="3">⭐⭐⭐ (3/5) - Good</option>
+                                                        <option value="2">⭐⭐ (2/5) - Fair</option>
+                                                        <option value="1">⭐ (1/5) - Poor</option>
                                                     </select>
                                                 </div>
-                                            </div>
 
-                                            <div class="mb-3">
-                                                <label class="form-label text-muted small">Your Review</label>
-                                                
-                                                <!-- Добавихме maxlength и oninput -->
-                                                <textarea name="comment"
-                                                      id="reviewInput"
-                                                      class="form-control bg-black text-white border-secondary"
-                                                      rows="3"
-                                                      required
-                                                      maxlength="900"
-                                                      placeholder="Tell us what you think..."
-                                                      style="resize: vertical; max-height: 250px;"
-                                                      oninput="updateCharCount(this)"></textarea>
+                                                <div class="mb-3">
+                                                    <label class="form-label text-muted small fw-bold text-uppercase">Your Review</label>
+                                                    <textarea name="comment"
+                                                          id="reviewInput"
+                                                          class="form-control bg-black text-white border-secondary"
+                                                          rows="4"
+                                                          required
+                                                          maxlength="900"
+                                                          placeholder="What do you love about it?"
+                                                          style="resize: vertical; max-height: 250px;"
+                                                          oninput="updateCharCount(this)"></textarea>
 
-                                                <!-- Брояч -->
-                                                <div class="text-end mt-1">
-                                                    <small class="text-muted" id="charCount">0 / 900</small>
+                                                    <div class="text-end mt-1">
+                                                        <small class="text-muted" id="charCount">0 / 900</small>
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            <button type="submit" class="btn btn-light text-uppercase fw-bold">Submit Review</button>
-                                        </form>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div class="mt-4">
-                                        <a href="@Url.Action("Login", "Account")" class="btn btn-outline-light btn-sm">Login to write a review</a>
-                                    </div>
-                                }
-
+                                                <button type="submit" class="btn btn-danger w-100 text-uppercase fw-bold py-2">
+                                                    Submit Review
+                                                </button>
+                                            </form>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <!-- Ако не е логнат -->
+                                        <div class="p-4 bg-dark border border-secondary rounded text-center">
+                                            <h5 class="text-uppercase fw-bold mb-3">Want to leave a review?</h5>
+                                            <p class="text-muted small">You must be logged in to share your opinion with the community.</p>
+                                            <a href="@Url.Action("Login", "Account")" class="btn btn-outline-light w-100 text-uppercase fw-bold">
+                                                Log In / Register
+                                            </a>
+                                        </div>
+                                    }
+                                </div>
                             </div>
+
                         </div>
                     </div>
 

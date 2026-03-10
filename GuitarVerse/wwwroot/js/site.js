@@ -260,6 +260,32 @@ function updateCharCount(field) {
     document.getElementById('charCount').innerText = field.value.length + " /900";
 }
 
+// --- НОВО: Логика за Show More Ревюта ---
+document.addEventListener('DOMContentLoaded', function () {
+    const toggleBtn = document.getElementById('toggleReviewsBtn');
+
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', function () {
+            const hiddenReviews = document.querySelectorAll('.hidden-review');
+            let isShowing = false;
+
+            hiddenReviews.forEach(review => {
+                review.classList.toggle('show-review');
+                if (review.classList.contains('show-review')) {
+                    isShowing = true;
+                }
+            });
+
+            if (isShowing) {
+                toggleBtn.innerHTML = 'Show Less <i class="fa-solid fa-chevron-up ms-2"></i>';
+            } else {
+                const count = hiddenReviews.length + 2; // Всички ревюта
+                toggleBtn.innerHTML = 'Read All ' + count + ' Reviews <i class="fa-solid fa-chevron-down ms-2"></i>';
+            }
+        });
+    }
+});
+
 // ------------------------------
 // Бутон за проследяване на поръчката
 // ------------------------------
@@ -448,3 +474,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+
+
