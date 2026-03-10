@@ -1,0 +1,33 @@
+﻿@model int // Тук получаваме OrderID
+
+@{
+    ViewData["Title"] = "Order Confirmed";
+}
+
+
+<div class="success-wrapper">
+    <div class="success-card">
+
+        <div class="icon-circle">
+            <i class="fa-solid fa-check fa-4x text-white"></i>
+        </div>
+
+        <h1 class="success-heading">Order Confirmed!</h1>
+
+        <p class="text-muted mb-4">
+            Thank you for rocking with <strong>GuitarVerse</strong>. Your gear is being prepared for shipment.
+            We've sent a confirmation email with all the details.
+        </p>
+
+        <div class="order-number">
+            Order #@Model
+        </div>
+
+        <div class="mt-4">
+            <a href="@Url.Action("Index", "Home")" class="btn btn-home">
+                Back to Home
+            </a>
+        </div>
+
+    </div>
+</div>

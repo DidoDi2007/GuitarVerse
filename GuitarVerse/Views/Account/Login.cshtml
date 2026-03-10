@@ -34,7 +34,13 @@
 
                     <label>Password</label>
                     <input type="password" name="password" id="loginPassword" class="form-control mb-2" data-show-toggle="showLoginPassword" required />
-                    <input type="checkbox" id="showLoginPassword"> Show Password
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="showLoginPassword">
+                        <label class="form-check-label" for="showLoginPassword">
+                            Show Password
+                        </label>
+                    </div>
+
 
                     <div class="mb-2 text-end">
                         <a asp-controller="Account" asp-action="ForgotPassword" class="text-decoration-none">Forgot your password?</a>
@@ -64,7 +70,12 @@
 
                     <label>Confirm Password</label>
                     <input type="password" name="confirmPassword" id="confirmPassword" class="form-control mb-2" data-show-toggle="showPassword" required />
-                    <input type="checkbox" id="showPassword"> Show Password
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="showPassword">
+                        <label class="form-check-label" for="showPassword">
+                            Show Password
+                        </label>
+                    </div>
 
                     <div id="passwordCriteria" class="text-muted mt-1 small">
                         Minimum 8 characters, at least one uppercase letter and one number.
@@ -76,6 +87,8 @@
                     {
                         <div class="text-danger mt-2">@ViewBag.RegisterError</div>
                     }
+
+                    
                 </form>
             </div>
         </div>

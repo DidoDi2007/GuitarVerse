@@ -1,0 +1,188 @@
+﻿@model GuitarVerse.Models.ShopViewModel
+@{
+    ViewData["Title"] = "Shop";
+}
+
+
+<div class="shop-wrapper">
+    <!-- PAGE HEADER BAR -->
+    <div class="page-header-bar">
+        <div class="container-fluid px-5">
+            <div class="d-flex justify-content-between align-items-center">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb m-0">
+                        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Home</a></li>
+                        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Shop")">Shop</a></li>
+                        @if (!string.IsNullOrEmpty(Model.CurrentBrand))
+                        {
+                            <li class="breadcrumb-item active text-danger">@Model.CurrentBrand</li>
+                        }
+                        else if (Model.CurrentCategoryId != null)
+                        {
+                            <li class="breadcrumb-item active">Category</li>
+                        }
+                        else
+                        {
+                            <li class="breadcrumb-item active">All Products</li>
+                        }
+                    </ol>
+                </nav>
+                <h1 class="page-title-small">
+                    @(string.IsNullOrEmpty(Model.CurrentBrand) ? "GuitarVerse Store" : Model.CurrentBrand)
+                </h1>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="shop-wrapper pt-4">
+        <div class="container-fluid px-5">
+
+            <!-- Формата вече има ID, за да я намерим с JS -->
+            <form id="filterForm" method="get" asp-controller="Shop" asp-action="Index">
+
+                <input type="hidden" name="categoryId" value="@Model.CurrentCategoryId" />
+
+                <div class="row">
+                    <!-- SIDEBAR -->
+                    <div class="col-md-2 pe-4 border-end border-secondary">
+
+                        <!-- Search Input -->
+                        <div class="mb-4">
+                            <h3 class="fw-bold text-uppercase mb-3">Search</h3>
+                            <input type="text" name="query" id="searchInput" class="form-control filter-search"
+                                   placeholder="Type to search..." value="@Model.SearchQuery" autocomplete="off">
+                        </div>
+
+                        <!-- Brands -->
+                        <div class="mb-4">
+                            <div class="sidebar-title">Brands</div>
+                            @foreach (var brand in Model.Brands)
+                            {
+                                <div class="form-check">
+                                    <!-- Добавяме class "auto-submit" за JS -->
+                                    <input class="form-check-input auto-submit" type="checkbox" name="selectedBrands" value="@brand"
+                                           id="brand-@brand" @(Model.SelectedBrands.Contains(brand) ? "checked" : "")>
+                                    <label class="form-check-label" for="brand-@brand">@brand</label>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Price Range (Input changes trigger search too) -->
+                        <div class="mb-4">
+                            <div class="sidebar-title">Price Range</div>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <input type="number" name="minPrice" class="form-control form-control-sm filter-search auto-input" placeholder="Min" value="@Model.MinPrice">
+                                </div>
+                                <div class="col-6">
+                                    <input type="number" name="maxPrice" class="form-control form-control-sm filter-search auto-input" placeholder="Max" value="@Model.MaxPrice">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Orientation -->
+                        <div class="mb-4">
+                            <div class="sidebar-title">Orientation</div>
+                            <div class="form-check">
+                                <input class="form-check-input auto-submit" type="radio" name="orientation" value="Right-Handed" id="right" @(Model.SelectedOrientation == "Right-Handed" ? "checked" : "")>
+                                <label class="form-check-label" for="right">Right-Handed</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input auto-submit" type="radio" name="orientation" value="Left-Handed" id="left" @(Model.SelectedOrientation == "Left-Handed" ? "checked" : "")>
+                                <label class="form-check-label" for="left">Left-Handed</label>
+                            </div>
+                        </div>
+
+                        <!-- Number of Strings -->
+                        <div class="mb-4">
+                            <div class="sidebar-title">Number of Strings</div>
+                            @foreach (var str in new[] { 4, 5, 6, 7, 8 })
+                            {
+                                <div class="form-check">
+                                    <input class="form-check-input auto-submit" type="radio" name="strings" value="@str" id="str-@str" @(Model.SelectedStrings == str ? "checked" : "")>
+                                    <label class="form-check-label" for="str-@str">@str Strings</label>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Electronics -->
+                        <div class="mb-4">
+                            <div class="sidebar-title">Electronics</div>
+                            <div class="form-check">
+                                <input class="form-check-input auto-submit" type="radio" name="pickup" value="Active" id="active" @(Model.SelectedPickup == "Active" ? "checked" : "")>
+                                <label class="form-check-label" for="active">Active Pickups</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input auto-submit" type="radio" name="pickup" value="Passive" id="passive" @(Model.SelectedPickup == "Passive" ? "checked" : "")>
+                                <label class="form-check-label" for="passive">Passive Pickups</label>
+                            </div>
+                        </div>
+
+                        <a href="@Url.Action("Index", "Shop")" class="btn btn-outline-light w-100 mt-2 btn-sm">Clear All Filters</a>
+                    </div>
+
+                    <!-- PRODUCT GRID CONTAINER -->
+                    <div class="col-md-10 ps-4">
+
+                        <!-- Sort & Count Header -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <!-- Махнахме динамичния брояч за JS версията за по-просто, или може да го оставим статичен -->
+                            <span class="text-white">Results</span>
+
+                            <div class="d-flex align-items-center">
+                                <label class="me-2 text-muted small">Sort By:</label>
+                                <select name="sortOrder" id="sortOrder" class="form-select form-select-sm bg-dark text-white border-secondary" style="width: 150px;">
+                                    <!option value="newest" @(Model.SortOrder == "newest" ? "selected" : "")>Newest</!option>
+                                    <!option value="price_asc" @(Model.SortOrder == "price_asc" ? "selected" : "")>Price: Low to High</!option>
+                                    <!option value="price_desc" @(Model.SortOrder == "price_desc" ? "selected" : "")>Price: High to Low</!option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Container, който JS ще пълни -->
+                        <div id="productGridContainer">
+                            @if (!Model.Products.Any())
+                            {
+                                <div class="text-center py-5 text-white">
+                                    <h4>No products match your selection.</h4>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="row g-4">
+                                    @foreach (var product in Model.Products)
+                                    {
+                                        <div class="col-6 col-md-4 col-lg-3">
+                                            <!-- Добавяме 'position-relative', за да работи stretched-link -->
+                                            <div class="card shop-card h-100 position-relative">
+                                                <div class="shop-img-box">
+                                                    <img src="@product.ImagePath" alt="@product.Name">
+                                                </div>
+                                                <div class="card-body px-0 pt-2 text-center">
+                                                    <div class="product-meta mb-1">@product.Brand</div>
+                                                    <div class="product-title px-2">
+                                                        <!-- ТУК Е МАГИЯТА: class="stretched-link" прави цялата карта кликаема -->
+                                                        <!-- И сменихме href="#" с реалния линк -->
+                                                        <a href="@Url.Action("Details", "Shop", new { id = product.ProductID })"
+                                                           class="text-dark text-decoration-none stretched-link">
+                                                            @product.Name
+                                                        </a>
+                                                    </div>
+                                                    <div class="product-price">@product.Price.ToString("N0") €</div>
+                                                    <div class="product-meta mt-1 text-success">In Stock</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+

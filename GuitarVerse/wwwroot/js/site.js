@@ -80,3 +80,163 @@ setupPasswordValidation(
     "form#resetPasswordForm button[type='submit']", // submit button
     "#passwordCriteria"   // criteria div in reset form
 );
+
+
+
+// ------------------------------
+// Зареждане на продуктите
+// ------------------------------
+document.addEventListener("DOMContentLoaded", function () {
+
+    // 1. ВАЖНО: Проверка дали сме на страницата Shop
+    const form = document.getElementById("filterForm");
+    if (!form) return; // Ако няма форма, спираме (за да не гърми на Home/Login)
+
+    console.log("Shop Logic Active!");
+
+    const gridContainer = document.getElementById("productGridContainer");
+    const searchInput = document.getElementById("searchInput");
+    const sortSelect = document.getElementById("sortOrder");
+
+    // Функция за създаване на HTML карта
+    function buildProductCard(product) {
+        const formattedPrice = new Intl.NumberFormat('en-US', {
+            style: 'decimal',
+            minimumFractionDigits: 0
+        }).format(product.price);
+
+        // ВАЖНО: product.productID (или productId) трябва да идва правилно от контролера
+        return `
+            <div class="col-6 col-md-4 col-lg-3">
+                <!-- Добавено position-relative -->
+                <div class="card shop-card h-100 position-relative">
+                    <div class="shop-img-box">
+                        <img src="${product.imagePath}" alt="${product.name}">
+                    </div>
+                    <div class="card-body px-0 pt-2 text-center">
+                        <div class="product-meta mb-1">${product.brand}</div>
+                        <div class="product-title px-2">
+                            <!-- Добавено stretched-link: Това прави цялата карта кликаема -->
+                            <a href="/Shop/Details/${product.productID}" class="text-dark text-decoration-none stretched-link">
+                                ${product.name}
+                            </a>
+                        </div>
+                        <div class="product-price">${formattedPrice} €</div>
+                        <div class="product-meta mt-1 text-success">In Stock</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function updateProducts() {
+        const formData = new FormData(form);
+        const searchParams = new URLSearchParams(formData).toString();
+
+        const newUrl = window.location.pathname + "?" + searchParams;
+        window.history.pushState(null, "", newUrl);
+
+        fetch(newUrl, {
+            headers: { "X-Requested-With": "XMLHttpRequest" }
+        })
+            .then(response => response.json())
+            .then(data => {
+                gridContainer.innerHTML = "";
+
+                if (data.length === 0) {
+                    gridContainer.innerHTML = `
+                    <div class="text-center py-5 text-white">
+                        <h4>No products match your selection.</h4>
+                        <p class="text-muted">Try clearing some filters.</p>
+                    </div>`;
+                } else {
+                    let htmlBuffer = '<div class="row g-4">';
+                    data.forEach(product => {
+                        htmlBuffer += buildProductCard(product);
+                    });
+                    htmlBuffer += '</div>';
+                    gridContainer.innerHTML = htmlBuffer;
+                }
+            })
+            .catch(error => console.error("Error:", error));
+    }
+
+    // Слушатели
+    form.addEventListener("change", function (e) {
+        if (e.target.classList.contains("auto-submit") || e.target.classList.contains("auto-input")) {
+            updateProducts();
+        }
+    });
+
+    if (searchInput) {
+        let debounceTimer;
+        searchInput.addEventListener("input", () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(updateProducts, 500);
+        });
+        searchInput.addEventListener("keypress", function (e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                updateProducts();
+            }
+        });
+    }
+
+    if (sortSelect) sortSelect.onchange = updateProducts;
+});
+//==========================
+//Детайлна страница
+//==========================
+
+
+// Смяна на главната снимка при клик на тъмбнейл
+
+    // Смяна на главната снимка + Active Class
+    function changeImage(src, element) {
+        document.getElementById('mainImage').src = src;
+
+        // Махане на active от всички
+        document.querySelectorAll('.thumbnail').forEach(el => el.classList.remove('active'));
+    // Слагане на active на натиснатия
+    element.classList.add('active');
+}
+
+//==========================
+// Kolichka
+//==========================
+
+
+// Обновяване на баджа на количката
+document.addEventListener("DOMContentLoaded", function () {
+    fetch('/Cart/GetCartCount')
+        .then(response => response.json())
+        .then(count => {
+            const badge = document.getElementById('cartBadge');
+            if (count > 0) {
+                badge.innerText = count;
+                badge.style.display = 'inline-block'; // Показваме го само ако има продукти
+            } else {
+                badge.style.display = 'none';
+            }
+        })
+        .catch(err => console.error("Error loading cart count", err));
+});
+
+// ------------------------------
+// Initialize validation for Profile Security (Change Password)
+// ------------------------------
+setupPasswordValidation(
+    "#newPassword",          // полето за новата парола
+    "#confirmNewPassword",   // полето за потвърждение
+    "#savePasswordBtn",      // бутонът за запис
+    "#passwordCriteria"      // текстът с правилата
+);
+
+
+
+// ------------------------------
+// Reviews
+// ------------------------------
+function updateCharCount(field) {
+    document.getElementById('charCount').innerText = field.value.length + " /900";
+}

@@ -1,106 +1,1276 @@
+﻿/* =========================================
+   1. GLOBAL STYLES (Основни настройки)
+   ========================================= */
 html {
-  font-size: 14px;
+    position: relative;
+    min-height: 100%;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
-passwordCriteria {
-    margin: 10px;
-}
-
-.btn-hover {
-    transition: all 0.2s ease-in-out;
-}
-
-.btn-hover:hover {
-    background-color: #333 !important;
-    color: #fff !important;
-    transform: scale(1.02);
-}
-
-.nav-tabs .nav-link.active {
-    background-color: #000;
-    color: #fff;
-    border-radius: 0;
-}
-
-.nav-tabs .nav-link {
-    color: #333;
-    transition: all 0.2s ease-in-out;
-}
-
-.nav-tabs .nav-link:hover {
-    background-color: #f8f9fa;
-}
-
-/* Center the forgot-password page */
-.forgot-container {
-    min-height: 80vh;
-}
-
-/* Card sizing */
-.forgot-card {
-    width: 400px;
-}
-
-/* Login/Register page layout */
-.auth-container {
-    min-height: 80vh;
-    background-color: #f0f0f0;
-}
-
-/* Main card */
-.auth-card {
-    width: 400px;
-    background-color: #ffffff;
-    border-radius: 12px;
-}
-
-/* Icon above the tabs */
-.auth-icon {
-    font-size: 2rem;
-}
-
-/* Hover effect for buttons */
-.btn-hover:hover {
-    opacity: 0.9;
-    transform: scale(1.02);
-    transition: 0.2s ease;
+    html {
+        font-size: 16px;
+    }
 }
 
 body {
-    margin-bottom: 60px;
+    background-color: #121212; /* Тъмен фон за целия сайт */
+    color: #e0e0e0; /* Светъл текст */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding-top: 130px; /* Място за Sticky Header */
+    margin-bottom: 60px; /* Място за Footer */
 }
 
-/* Shared container for auth pages */
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.2s;
+}
+
+    a:hover {
+        color: #fff;
+    }
+
+/* =========================================
+   2. HEADER & NAVIGATION (Навигацията)
+   ========================================= */
+header.fixed-top {
+    background-color: #000;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.8);
+    z-index: 1030;
+}
+
+.top-header {
+    padding: 15px 40px;
+    border-bottom: 1px solid #222;
+}
+
+/* Лого */
+.logo-text {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #fff !important;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Търсачка */
+.search-container {
+    width: 40%;
+    transform: translateX(-75px);
+}
+
+.search-input {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    color: #fff;
+    border-radius: 4px 0 0 4px;
+    padding: 10px 15px;
+}
+
+    .search-input:focus {
+        background-color: #222;
+        color: #fff;
+        border-color: #555;
+        box-shadow: none;
+        outline: none;
+    }
+
+.search-btn {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    border-left: none;
+    color: #888;
+    border-radius: 0 4px 4px 0;
+    padding: 0 15px;
+}
+
+    .search-btn:hover {
+        background-color: #333;
+        color: #fff;
+    }
+
+/* Икони (Login, Cart) */
+.icon-link {
+    color: #fff;
+    font-size: 1.5rem;
+    margin-left: 15px;
+}
+
+    .icon-link:hover {
+        color: #bbb;
+    }
+
+/* Долно меню (Nav Bar) */
+.bottom-nav {
+    background-color: #000;
+    padding: 10px 0;
+}
+
+.nav-links .nav-link {
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 10px 15px;
+}
+
+    .nav-links .nav-link:hover {
+        color: #ccc;
+    }
+
+.fa-chevron-down {
+    font-size: 0.7rem;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
+/* Падащи менюта (Dropdowns) */
+.dropdown-menu-custom {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #1a1a1a;
+    min-width: 220px;
+    padding: 20px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.9);
+    z-index: 1000;
+    border-top: 2px solid #fff;
+}
+
+.dropdown-hover {
+    position: relative;
+}
+
+.dropdown-hover:hover .dropdown-menu-custom {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+.dropdown-menu-custom h6 {
+    color: #fff;
+    text-transform: uppercase;
+    font-weight: bold;
+    border-bottom: 1px solid #444;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+}
+
+.dropdown-menu-custom a {
+    display: block;
+    color: #bbb;
+    padding: 5px 0;
+    font-size: 0.9rem;
+    text-transform: capitalize;
+}
+
+    .dropdown-menu-custom a:hover {
+        color: #fff;
+        padding-left: 5px;
+    }
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.highlight-hover:hover {
+    color: #e74c3c !important;
+}
+
+/* =========================================
+    HOME PAGE SPECIFIC STYLES, Начална страница, NEW ARRIVALS
+   ========================================= */
+
+/* Махане на долната линия на заглавието само тук */
+.section-title.no-border {
+    border-bottom: none;
+}
+
+/* Кутията за снимката на началната страница */
+.home-img-container {
+    height: 250px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    padding: 10px;
+    border-bottom: 1px solid #333;
+}
+
+    /* Самата снимка */
+    .home-img-container img {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+        transition: transform 0.3s ease;
+    }
+
+/* Ефект при ховър върху картата */
+.product-card:hover .home-img-container img {
+    transform: scale(1.05); /* Леко увеличение */
+}
+
+/* Заглавието на продукта */
+.home-product-title {
+    font-size: 1rem;
+    height: 40px; /* Фиксирана височина за 2 реда */
+    overflow: hidden;
+    margin-bottom: 10px;
+    line-height: 1.2;
+}
+
+
+
+
+/* =========================================
+   3. AUTH PAGES (Login / Register Fix)
+   ========================================= */
+
+/* Контейнерът вече е прозрачен, за да се вижда тъмния body фон */
 .auth-container {
     min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 20px;
 }
 
-/* Shared card styling */
+/* Картата за вход - Тъмна */
 .auth-card {
-    width: 400px;
-    border-radius: 12px;
+    width: 450px;
+    background-color: #1e1e1e; /* Тъмно сиво */
+    border: 1px solid #333;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    padding: 30px;
+    color: #fff;
 }
 
-.auth-container {
+.auth-icon {
+    font-size: 3rem;
+    color: #fff;
+    margin-bottom: 20px;
+    text-align: center;
+    display: block;
+}
+
+/* Оправяне на Inputs (полетата за писане) */
+.form-control {
+    background-color: #2c2c2c;
+    border: 1px solid #444;
+    color: #fff;
+}
+
+    .form-control:focus {
+        background-color: #333;
+        color: #fff;
+        border-color: #fff;
+        box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+    }
+
+    /* Placeholder текст (да е сив, не черен) */
+    .form-control::placeholder {
+        color: #888;
+    }
+
+/* Бутони */
+.btn-primary {
+    background-color: #fff;
+    color: #000;
+    border: none;
+    font-weight: bold;
+    text-transform: uppercase;
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+    .btn-primary:hover {
+        background-color: #ccc;
+        color: #000;
+    }
+
+/* Табове (Login / Register) */
+.nav-tabs {
+    border-bottom: 1px solid #444;
+    margin-bottom: 20px;
+}
+
+    .nav-tabs .nav-link {
+        color: #888;
+        border: none;
+        background: transparent;
+    }
+
+        .nav-tabs .nav-link:hover {
+            color: #ccc;
+            border: none;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: #fff;
+            background-color: transparent;
+            border-bottom: 2px solid #fff;
+            border-radius: 0;
+        }
+
+/* Критерии за парола */
+#passwordCriteria {
+    font-size: 0.85rem;
+    margin-top: 10px;
+}
+
+.text-danger {
+    color: #ff6b6b !important;
+}
+
+.text-success {
+    color: #51cf66 !important;
+}
+
+/* Forgot Password страница */
+.forgot-container {
     min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.auth-card {
+.forgot-card {
     width: 400px;
+    background-color: #1e1e1e;
+    padding: 30px;
+    border-radius: 8px;
+    border: 1px solid #333;
+}
+
+/* =========================================
+   4. FOOTER
+   ========================================= */
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 60px;
+    line-height: 60px;
+    background-color: #000;
+    border-top: 1px solid #222;
+}
+
+    footer a {
+        color: #bbb;
+    }
+
+/* =========================================
+   5. HOME PAGE STYLES
+   ========================================= */
+
+/* HERO SECTION (Full Width) */
+.hero-section {
+    position: relative;
+    /* Тази снимка ще се разпъне на 100% от ширината */
+    width: 100%;
+    /* Височина - 85% от екрана, за да е внушително */
+    height: 110vh;
+    /* Смени линка с твоя снимка */
+    background-size: cover;
+    background-position: center;
+    /* Премахваме margin-top, защото махнахме container-а в Layout */
+    margin-top: 0;
+}
+
+/* Текста на началната снимка */
+
+.hero-content h1 {
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.9); /* Силна черна сянка за заглавието */
+}
+
+.hero-content p {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 1); /* Плътна сянка за малкия текст */
+    font-weight: 600; /* Малко по-дебел шрифт за по-добър контраст */
+    background-color: rgba(0, 0, 0, 0.3); /* Лек черен фон само зад текста (опционално) */
+    padding: 5px 15px; /* Въздух около текста, ако ползваш background-color */
+    border-radius: 4px;
+    display: inline-block; /* За да е само колкото текста */
+}
+
+/* overlay - намаляваме го малко, за да изпъкне яката снимка */
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Беше 0.5, правим го 0.2 (по-светло) или 0 (ако искаш оригиналната яркост) */
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* Добавяме лека сянка под бутоните, за да се четат по-добре */
+.shadow-lg {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5) !important;
+}
+
+/* SHOP BY BRAND (Circles) */
+.brand-item {
+    display: block;
+    text-decoration: none;
+}
+
+.brand-circle {
+    width: 120px;
+    height: 120px;
+    background-color: #1a1a1a; /* Тъмно сиво кръгче */
+    border: 1px solid #333;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    transition: all 0.3s ease;
+    overflow: hidden; /* За да не излиза картинката извън кръга */
+    padding: 20px; /* Вътрешно отстояние, за да не опира логото в края */
+}
+
+    /* Стил за логото вътре */
+    .brand-circle img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain; /* Запазва пропорциите */
+        /* ТРИК: Прави черните лога бели! */
+        /* Ако логата ти са цветни, махни следващия ред */
+        filter: brightness(0) invert(1);
+        transition: all 0.3s ease;
+    }
+
+/* Ефект при посочване */
+.brand-item:hover .brand-circle {
+    background-color: #fff; /* Кръгчето става бяло */
+    border-color: #fff;
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+    /* При ховър логото става черно (за да се вижда на белия фон) */
+    .brand-item:hover .brand-circle img {
+        filter: brightness(0); /* Прави го черно */
+    }
+
+/* Ефект при посочване */
+.brand-item:hover .brand-circle {
+    background-color: #fff; /* Бял фон */
+    color: #000; /* Черен текст */
+    border-color: #fff;
+    transform: scale(1.1); /* Леко увеличаване */
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); /* Бяло сияние */
+}
+
+/* Titles */
+.section-title {
+    color: #fff;
+    letter-spacing: 2px;
+    display: inline-block;
+    padding-bottom: 10px;
+}
+
+/* PRODUCT CARDS (Същите като преди) */
+.product-card {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    transition: all 0.3s ease;
+}
+
+    .product-card:hover {
+        border-color: #666;
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    }
+
+    .product-card .card-body {
+        background-color: #1a1a1a;
+    }
+
+    .product-card img {
+        border-bottom: 1px solid #333;
+    }
+
+.view-all-link:hover {
+    color: #fff !important;
+}
+
+/* =========================================
+   6. SHOP PAGE STYLES (REFINED DESIGN)
+   ========================================= */
+
+/* Основен фон */
+.shop-wrapper {
+    background-color: #0c0c0c; /* Почти черно, но не съвсем */
+    min-height: 100vh;
+    color: #fff;
+    padding-top: 0 !important;
+}
+
+/* --- PAGE HEADER (Лентата под менюто) --- */
+.page-header-bar {
+    background: linear-gradient(to right, #111, #1a1a1a); /* Лек градиент за обем */
+    border-bottom: 1px solid #333;
+    padding: 20px 0;
+    margin-top: 20px;
+    margin-bottom: 40px; /* Повече въздух под лентата */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+
+/* Breadcrumbs (Лявата част) */
+.breadcrumb-item a {
+    color: #888;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: color 0.3s;
+}
+
+    .breadcrumb-item a:hover {
+        color: #fff;
+    }
+
+.breadcrumb-item.active {
+    color: #fff;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    padding-bottom: 2px;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    color: #555; /* По-тъмен разделител (/) */
+}
+
+/* Page Title (Дясната част - "GUITARVERSE STORE") */
+.page-title-small {
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #333; /* Тъмно сиво - да стои като "воден знак" */
+    margin: 0;
+    letter-spacing: 2px;
+    font-size: 1.8rem; /* По-малък размер */
+    text-shadow: 1px 1px 0 rgba(255,255,255,0.1); /* Лек ефект на вдлъбване */
+}
+
+/* --- SIDEBAR (Филтрите) --- */
+.sidebar-title {
+    color: #fff;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #333; /* По-дебела линия */
+    padding-bottom: 5px;
+    letter-spacing: 1px;
+}
+
+.form-check-label {
+    color: #aaa;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: color 0.2s, padding-left 0.2s;
+}
+
+    .form-check-label:hover {
+        color: #fff;
+        padding-left: 5px; /* Леко плъзване надясно при ховър */
+    }
+
+/* Custom Checkboxes */
+.form-check-input {
+    background-color: #1a1a1a;
+    border: 1px solid #444;
+    cursor: pointer;
+}
+
+    .form-check-input:checked {
+        background-color: #fff;
+        border-color: #fff;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23000' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e");
+    }
+
+    .form-check-input:focus {
+        box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.1);
+    }
+
+/* Search Input */
+.filter-search {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    color: #fff;
+    padding: 8px 10px;
+}
+
+    .filter-search:focus {
+        background-color: #000;
+        border-color: #666;
+        color: #fff;
+    }
+
+/* --- PRODUCT CARDS --- */
+.shop-card {
+    background-color: #fff;
+    border: none;
+    border-radius: 4px; /* Леко заобляне */
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+    .shop-card:hover {
+        transform: translateY(-7px); /* По-изразено повдигане */
+        box-shadow: 0 10px 20px rgba(255,255,255,0.1); /* Бяло сияние при ховър */
+    }
+
+.shop-img-box {
+    background-color: #f4f4f4;
+    height: 280px; /* Малко по-ниски */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 20px;
+}
+
+/* Снимката вътре в картата */
+.shop-card img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    mix-blend-mode: multiply; /* Слива белия фон на снимката със сивия фон на кутията */
+    filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2)); /* Сянка на самата китара */
+}
+
+.card-body {
+    padding: 15px !important;
+}
+
+.product-meta {
+    font-size: 0.75rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+
+.product-title {
+    font-weight: 800;
+    font-size: 1rem;
+    color: #111;
+    text-transform: uppercase;
+    line-height: 1.3;
+    height: 42px; /* Фиксирана височина за 2 реда текст */
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.product-price {
+    font-weight: 900;
+    font-size: 1.2rem;
+    color: #000;
+    margin-top: 10px;
+}
+
+.in-stock-text {
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: #27ae60; /* Зелено */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 5px;
+}
+
+/* =========================================
+   Дизайн за страница с детайли
+   ========================================= */
+
+/* Details Page Styles */
+.details-wrapper {
+    background-color: #0c0c0c; /* Тъмен фон */
+    color: #fff;
+    min-height: 100vh;
+    padding-top: 20px;
+    padding-bottom: 80px;
+}
+
+/* Gallery */
+.gallery-container {
+    display: flex;
+    gap: 20px;
+}
+
+.thumbnail-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.thumbnail {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    border: 1px solid #333;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+    opacity: 0.6;
+}
+
+    .thumbnail:hover, .thumbnail.active {
+        border-color: #fff;
+        opacity: 1;
+        box-shadow: 0 0 10px rgba(255,255,255,0.2);
+    }
+
+.main-image-container {
+    flex-grow: 1;
+    background: #fff; /* Бял фон за снимката, както при Jackson */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #333;
+    height: 600px; /* Висока снимка */
+    position: relative;
+    border-radius: 4px;
+}
+
+.main-image {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    /* mix-blend-mode: multiply; -> Ако снимките имат бял фон, това го скрива */
+}
+
+/* Product Info */
+.brand-label {
+    color: #888;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+
+.product-name-large {
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 2.5rem;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.product-price-large {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 20px;
+}
+
+.feature-list {
+    margin-top: 20px;
+}
+
+    .feature-list li {
+        color: #ccc;
+        margin-bottom: 12px;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+    }
+
+.feature-icon {
+    width: 30px;
+    color: #888;
+    text-align: center;
+    margin-right: 10px;
+}
+
+/* Tabs (Overview / Specs) */
+.nav-tabs {
+    border-bottom: 1px solid #333;
+    margin-top: 50px;
+}
+
+    .nav-tabs .nav-link {
+        color: #666;
+        border: none;
+        text-transform: uppercase;
+        font-weight: 800;
+        padding: 15px 30px;
+        font-size: 1.1rem;
+        letter-spacing: 1px;
+    }
+
+        .nav-tabs .nav-link:hover {
+            color: #aaa;
+        }
+
+        .nav-tabs .nav-link.active {
+            background: transparent;
+            color: #fff;
+            border-bottom: 3px solid #c0392b; /* Червен акцент */
+        }
+
+.tab-content {
+    padding: 40px 0;
+    color: #ccc;
+    line-height: 1.8;
+    font-size: 1.1rem;
+}
+
+/* Spec Table */
+.spec-table th {
+    width: 40%;
+    color: #666;
+    font-weight: normal;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+.spec-table td {
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.spec-table tr {
+    border-bottom: 1px solid #222;
+}
+
+.spec-table td, .spec-table th {
+    padding: 15px 0;
+}
+
+
+
+textarea.form-control {
+    resize: vertical; /* Позволява разпъване САМО надолу, не настрани */
+    max-height: 250px; /* Лимит докъде може да се разпъва */
+    min-height: 100px; /* Да не може да става по-малко от това */
+}
+
+
+/* =========================================
+   Дизайн за страница с количката
+   ========================================= */
+
+    .cart-wrapper {
+        background-color: #0c0c0c;
+        min-height: 80vh;
+        color: #fff;
+        padding-top: 40px;
+    }
+
+    .cart-header {
+        border-bottom: 1px solid #333;
+        padding-bottom: 20px;
+        margin-bottom: 30px;
+    }
+
+    /* Table Styles */
+    .cart-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 15px; /* Разстояние между редовете */
+    }
+
+    .cart-row {
+        background-color: #1a1a1a;
+        transition: transform 0.2s;
+    }
+
+        .cart-row:hover {
+            transform: scale(1.01);
+        }
+
+    .cart-cell {
+        padding: 20px;
+        vertical-align: middle;
+        border-top: 1px solid #333;
+        border-bottom: 1px solid #333;
+    }
+
+        .cart-cell:first-child {
+            border-left: 1px solid #333;
+            border-radius: 8px 0 0 8px;
+        }
+
+        .cart-cell:last-child {
+            border-right: 1px solid #333;
+            border-radius: 0 8px 8px 0;
+        }
+
+    .cart-img {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+        background: #fff;
+        border-radius: 4px;
+        padding: 5px;
+    }
+
+    .quantity-btn {
+        background: #333;
+        border: none;
+        color: #fff;
+        width: 30px;
+        height: 30px;
+        border-radius: 4px;
+    }
+
+        .quantity-btn:hover {
+            background: #555;
+        }
+
+    /* Summary Box */
+    .summary-box {
+        background-color: #1a1a1a;
+        padding: 30px;
+        border: 1px solid #333;
+        border-radius: 8px;
+    }
+
+    /* =========================================
+   7. HOME PAGE SPECIFIC STYLES
+   ========================================= */
+
+/* Махане на долната линия на заглавието само тук */
+.section-title.no-border {
+    border-bottom: none;
+}
+
+/* Кутията за снимката на началната страница */
+.home-img-container {
+    height: 250px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    padding: 10px;
+    border-bottom: 1px solid #333;
+}
+
+/* Самата снимка */
+.home-img-container img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+/* Ефект при ховър върху картата */
+.product-card:hover .home-img-container img {
+    transform: scale(1.05); /* Леко увеличение */
+}
+
+/* Заглавието на продукта */
+.home-product-title {
+    font-size: 1rem;
+    height: 40px; /* Фиксирана височина за 2 реда */
+    overflow: hidden;
+    margin-bottom: 10px;
+    line-height: 1.2;
+}
+
+/* =========================================
+   8. CHECKOUT form
+   ========================================= */
+
+.checkout-wrapper {
+    background-color: #0c0c0c;
+    min-height: 100vh;
+    color: #fff;
+    padding-top: 40px;
+    padding-bottom: 80px;
+}
+
+.checkout-header {
+    border-bottom: 1px solid #333;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+}
+
+.checkout-card {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 30px;
+}
+
+.form-label {
+    color: #bbb;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.form-control {
+    background-color: #0c0c0c;
+    border: 1px solid #444;
+    color: #fff;
+    padding: 12px;
+    border-radius: 0; /* Остри ръбове */
+}
+
+    .form-control:focus {
+        background-color: #000;
+        border-color: #fff;
+        color: #fff;
+        box-shadow: none;
+    }
+
+.text-danger {
+    font-size: 0.8rem;
+    margin-top: 5px;
+    display: block;
+}
+
+.stripe-btn {
+    background-color: #5469d4; /* Официалният цвят на Stripe */
+    color: #fff;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: background 0.3s;
+}
+
+    .stripe-btn:hover {
+        background-color: #4355b9;
+        color: #fff;
+    }
+
+
+/* =========================================
+   9. Success form
+   ========================================= */
+
+.success-wrapper {
+    background-color: #0c0c0c;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    text-align: center;
+}
+
+.success-card {
+    background-color: #1a1a1a;
+    padding: 60px 40px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.icon-circle {
+    width: 100px;
+    height: 100px;
+    background-color: #27ae60; /* Зелено */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 30px;
+    box-shadow: 0 0 20px rgba(39, 174, 96, 0.4);
+}
+
+.success-heading {
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.order-number {
+    font-size: 1.2rem;
+    color: #bbb;
+    margin-bottom: 30px;
+    background-color: #000;
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 4px;
+    border: 1px solid #333;
+}
+
+.btn-home {
+    background-color: #fff;
+    color: #000;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 15px 40px;
+    border-radius: 0;
+    transition: all 0.3s;
+}
+
+    .btn-home:hover {
+        background-color: #ccc;
+        transform: translateY(-2px);
+    }
+
+
+
+/* =========================================
+   10. PROFILE form
+   ========================================= */
+
+/* PROFILE DASHBOARD */
+.profile-wrapper {
+    background-color: #0c0c0c;
+    min-height: 80vh;
+    color: #fff;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.profile-card {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
     border-radius: 12px;
+    padding: 40px 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    height: 100%;
+    cursor: pointer;
+    text-decoration: none !important;
+    display: block; /* Прави целия a-tag блок */
+}
+
+    .profile-card:hover {
+        transform: translateY(-10px);
+        background-color: #222;
+        border-color: #fff;
+        box-shadow: 0 10px 30px rgba(255,255,255,0.1);
+    }
+
+.profile-icon {
+    font-size: 3rem;
+    color: #888;
+    margin-bottom: 20px;
+    transition: color 0.3s;
+}
+
+.profile-card:hover .profile-icon {
+    color: #fff;
+}
+
+.profile-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.profile-desc {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+/* Форми в профила */
+.profile-form-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #1a1a1a;
+    padding: 40px;
+    border-radius: 12px;
+    border: 1px solid #333;
+}
+
+/* Status Steps Styling */
+.steps {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+    position: relative;
+}
+
+.steps::before {
+    content: "";
+    position: absolute;
+    top: 15px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #333;
+    z-index: 0;
+}
+
+.step {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    background: #1a1a1a;
+    padding: 0 10px;
+}
+
+.step-icon {
+    width: 30px;
+    height: 30px;
+    background: #333;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 5px;
+    color: #888;
+    font-size: 0.8rem;
+}
+
+.step-text {
+    font-size: 0.75rem;
+    color: #888;
+    text-transform: uppercase;
+}
+
+/* Active Step */
+.step.active .step-icon {
+    background: #27ae60;
+    color: #fff;
+}
+
+.step.active .step-text {
+    color: #fff;
+    font-weight: bold;
+}
+
+
+/* =========================================
+   11. Review
+   ========================================= */
+
+
+/* Правило за дълги думи в ревютата */
+.review-text {
+    overflow-wrap: break-word; /* Стандартно счупване */
+    word-wrap: break-word; /* За по-стари браузъри */
+    word-break: break-word; /* Гаранция, че дългата дума ще се пренесе */
+    max-width: 100%; /* Да не излиза от контейнера */
 }

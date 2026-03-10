@@ -1,0 +1,104 @@
+﻿@model List<GuitarVerse.Models.Order>
+@{
+    ViewData["Title"] = "My Orders";
+}
+
+<div class="profile-wrapper">
+    <div class="container">
+        <h2 class="text-uppercase fw-bold mb-4">My Order History</h2>
+
+        @if (!Model.Any())
+        {
+            <div class="alert alert-dark text-center py-5">
+                <h4>No completed orders found.</h4>
+                <a href="@Url.Action("Index", "Shop")" class="btn btn-light mt-3 text-uppercase fw-bold">Start Shopping</a>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                @foreach (var order in Model)
+                {
+                    <div class="col-12 mb-4">
+                        <div class="card bg-dark border-secondary">
+                            <div class="card-header border-secondary d-flex justify-content-between align-items-center py-3">
+                                <div>
+                                    <span class="text-muted small text-uppercase">Order Placed</span><br>
+                                    <span class="fw-bold">@order.OrderDate.ToString("dd MMM yyyy")</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted small text-uppercase">Total</span><br>
+                                    <span class="fw-bold text-white">@order.TotalAmount.ToString("N2") €</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted small text-uppercase">Order #</span><br>
+                                    <span class="text-white">@order.OrderID</span>
+                                </div>
+                            </div>
+
+                            <div class="card-body">
+                                <!-- Status Steps Logic -->
+                                @{
+                                    var status = order.Status; // Paid, Shipped, Delivered
+                                    var isPaid = true;
+                                    var isShipped = status == "Shipped" || status == "Delivered";
+                                    var isDelivered = status == "Delivered";
+                                }
+
+                                <div class="steps">
+                                    <div class="step @(isPaid ? "active" : "")">
+                                        <div class="step-icon"><i class="fa-solid fa-check"></i></div>
+                                        <div class="step-text">Paid</div>
+                                    </div>
+                                    <div class="step @(isShipped ? "active" : "")">
+                                        <div class="step-icon"><i class="fa-solid fa-truck-fast"></i></div>
+                                        <div class="step-text">Shipped</div>
+                                    </div>
+                                    <div class="step @(isDelivered ? "active" : "")">
+                                        <div class="step-icon"><i class="fa-solid fa-box-open"></i></div>
+                                        <div class="step-text">Delivered</div>
+                                    </div>
+                                </div>
+
+                                <hr class="border-secondary">
+
+                                <div class="row align-items-center">
+                                    <div class="col-md-8">
+                                        @foreach (var detail in order.OrderDetails)
+                                        {
+                                            <div class="d-flex align-items-center mb-2">
+                                                <img src="@detail.Product.ImagePath" style="width: 50px; height: 50px; object-fit: contain; background: #fff; border-radius: 4px; padding: 2px;" class="me-3">
+                                                <div>
+                                                    <div class="fw-bold text-white">@detail.Product.Name</div>
+                                                    <div class="text-muted small">Qty: @detail.Quantity</div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="col-md-4 text-end">
+                                        @if (!string.IsNullOrEmpty(order.TrackingNumber))
+                                        {
+                                            <div class="mb-2">
+                                                <small class="text-muted">Tracking #:</small><br>
+                                                <span class="text-info font-monospace">@order.TrackingNumber</span>
+                                            </div>
+                                            <button class="btn btn-sm btn-outline-light">Track Package</button>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Processing</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="mt-4">
+                <a href="@Url.Action("Index")" class="btn btn-outline-secondary">Back to Profile</a>
+            </div>
+        }
+    </div>
+</div>

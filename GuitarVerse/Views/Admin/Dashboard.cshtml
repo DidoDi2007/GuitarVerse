@@ -1,0 +1,91 @@
+﻿@model GuitarVerse.Models.AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml"; // Изрично ползваме новия лейоут
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">Dashboard</h2>
+    <span class="text-muted">Welcome back, Admin</span>
+</div>
+
+<!-- STATS CARDS -->
+<div class="row g-4 mb-5">
+    <div class="col-md-4">
+        <div class="stat-card" style="border-left-color: #2980b9;">
+            <div>
+                <p>Total Revenue</p>
+                <h3 class="text-primary">@Model.TotalSales.ToString("N0") €</h3>
+            </div>
+            <div class="stat-icon"><i class="fa-solid fa-sack-dollar"></i></div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card" style="border-left-color: #e74c3c;">
+            <div>
+                <p>Pending Shipment</p>
+                <h3 class="text-danger">@Model.PendingOrders</h3>
+            </div>
+            <div class="stat-icon"><i class="fa-solid fa-truck-ramp-box"></i></div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card" style="border-left-color: #27ae60;">
+            <div>
+                <p>Total Products</p>
+                <h3 class="text-success">@Model.TotalProducts</h3>
+            </div>
+            <div class="stat-icon"><i class="fa-solid fa-layer-group"></i></div>
+        </div>
+    </div>
+</div>
+
+<!-- RECENT ORDERS TABLE -->
+<h4 class="mb-3 fw-bold">Recent Orders</h4>
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <table class="admin-table mb-0">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Customer</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model.RecentOrders)
+                {
+                    <tr>
+                        <td>#@order.OrderID</td>
+                        <td>@order.FirstName @order.LastName</td>
+                        <td>@order.OrderDate.ToShortDateString()</td>
+                        <td>
+                            @if (order.Status == "Paid")
+                            {
+                                <span class="badge bg-success">Paid</span>
+                            }
+                            else if (order.Status == "Shipped")
+                            {
+
+                                <span class="badge bg-primary">Shipped</span>
+                            }
+                            else
+                            {
+
+                                <span class="badge bg-warning text-dark">@order.Status</span>
+                            }
+                        </td>
+                        <td>@order.TotalAmount.ToString("N2") €</td>
+                        <td>
+                            <a href="#" class="btn btn-sm btn-outline-dark">Manage</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

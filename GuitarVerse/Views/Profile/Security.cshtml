@@ -1,0 +1,75 @@
+﻿@model GuitarVerse.Models.ChangePasswordViewModel
+@{
+    ViewData["Title"] = "Security";
+}
+
+<div class="profile-wrapper">
+    <div class="container">
+        <div class="profile-form-container">
+            <h2 class="text-uppercase fw-bold mb-4 text-center">Change Password</h2>
+
+            @if (ViewBag.Message != null)
+            {
+                <div class="alert alert-success">@ViewBag.Message</div>
+            }
+
+            <form method="post" id="changePasswordForm">
+
+                <!-- CURRENT PASSWORD -->
+                <div class="mb-3">
+                    <label class="form-label text-muted">Current Password</label>
+                    <!-- data-show-toggle="password-toggle" свързва полето с чекбокса -->
+                    <input asp-for="CurrentPassword" type="password" class="form-control bg-dark text-white border-secondary" data-show-toggle="password-toggle" />
+                    <span asp-validation-for="CurrentPassword" class="text-danger small"></span>
+                </div>
+
+                <!-- NEW PASSWORD -->
+                <div class="mb-3">
+                    <label class="form-label text-muted">New Password</label>
+                    <input asp-for="NewPassword" id="newPassword" type="password" class="form-control bg-dark text-white border-secondary" data-show-toggle="password-toggle" />
+                    <span asp-validation-for="NewPassword" class="text-danger small"></span>
+                </div>
+
+                <!-- CONFIRM PASSWORD -->
+                <div class="mb-3">
+                    <label class="form-label text-muted">Confirm New Password</label>
+                    <input asp-for="ConfirmPassword" id="confirmNewPassword" type="password" class="form-control bg-dark text-white border-secondary" data-show-toggle="password-toggle" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                </div>
+
+                <!-- SHOW PASSWORD CHECKBOX (Рециклираме JS логиката) -->
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="password-toggle">
+                    <label class="form-check-label text-muted" for="password-toggle">Show Passwords</label>
+                </div>
+
+                <!-- МЯСТО ЗА ВАЛИДАЦИЯТА (JS ще пише тук) -->
+                <div id="passwordCriteria" class="text-muted small mb-3">
+                    Password must be at least 8 characters, include one uppercase letter and one number.
+                </div>
+
+                <div class="mt-4 d-flex gap-3">
+                    <button type="submit" id="savePasswordBtn" class="btn btn-light flex-grow-1 text-uppercase fw-bold">Update Password</button>
+                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+
+            <!-- DANGER ZONE (НОВА СЕКЦИЯ) -->
+            <hr class="border-secondary my-5">
+
+            <div class="text-center">
+                <h4 class="text-danger text-uppercase fw-bold mb-3">Danger Zone</h4>
+                <p class="text-muted mb-4">
+                    Deleting your account is irreversible. All your data, order history, and reviews will be permanently removed.
+                </p>
+
+                <!-- Форма за изтриване -->
+                <form method="post" asp-action="DeleteAccount" onsubmit="return confirm('Are you absolutely sure you want to delete your account? This cannot be undone!');">
+                    <button type="submit" class="btn btn-outline-danger px-4 rounded-0 text-uppercase fw-bold">
+                        <i class="fa-solid fa-trash-can me-2"></i> Delete My Account
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

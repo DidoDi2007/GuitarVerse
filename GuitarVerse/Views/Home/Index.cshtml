@@ -1,8 +1,147 @@
-﻿@{
+﻿@model List<GuitarVerse.Models.Product> // ВАЖНО: Добави модела най-горе
+
+@{
     ViewData["Title"] = "Home Page";
+
+    // Тук дефинираме снимката. По-късно този линк ще идва от Базата Данни (Model.HeroImage)
+    var heroImage = "/images/mainpage/jackson3.jpg";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- 1. HERO SECTION -->
+<div class="hero-section d-flex align-items-center justify-content-center text-center"
+     style="background-image: url('@heroImage');">
+
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content position-relative text-white px-3">
+        <h1 class="display-2 fw-bold text-uppercase mb-3">Jackson American Series Soloist™ SL2MG</h1>
+        <p class="lead mb-4 text-light mx-auto" style="max-width: 700px;">
+            Built for speed and performance. Experience the next chapter in the legacy of metal.
+        </p>
+        <div class="d-flex justify-content-center gap-3" style="margin-bottom: 120px;">
+
+            <!-- ADD TO CART -->
+            <form method="post" asp-controller="Cart" asp-action="AddToCart">
+                <input type="hidden" name="productId" value="1" />
+                <input type="hidden" name="quantity" value="1" />
+
+                <button type="submit" class="btn btn-light btn-lg rounded-0 px-5 fw-bold text-uppercase shadow-lg">
+                    ADD TO CART
+                </button>
+            </form>
+
+            <!-- VIEW DETAILS -->
+            <a asp-controller="Shop" asp-action="Details" asp-route-id="1" class="btn btn-outline-light btn-lg rounded-0 px-5 text-uppercase pt-2 shadow-lg" style="background-color: rgba(0,0,0,0.5);">
+                VIEW DETAILS
+            </a>
+
+        </div>
+    </div>
+</div>
+
+<!-- 2. POPULAR BRANDS (Сменено от Shapes) -->
+<!-- 2. POPULAR BRANDS (LOGOS) -->
+<div class="container my-5 pt-4">
+    <div class="text-center mb-5">
+        <h2 class="text-uppercase fw-bold section-title no-border">Shop By Brand</h2>
+        <p class="text-muted">The best gear from the legendary names in rock and metal.</p>
+    </div>
+
+    <div class="row justify-content-center text-center gx-4 gy-4">
+        <!-- Brand 1: ESP -->
+        <div class="col-6 col-sm-4 col-md-2">
+            <a asp-controller="Shop" asp-action="Index" asp-route-selectedBrands="ESP" class="brand-item">
+                <div class="brand-circle">
+                    <img src="~/images/logos/esp.png" alt="ESP">
+                </div>
+            </a>
+        </div>
+
+        <!-- Brand 2: LTD -->
+        <div class="col-6 col-sm-4 col-md-2">
+            <a asp-controller="Shop" asp-action="Index" asp-route-selectedBrands="LTD" class="brand-item">
+                <div class="brand-circle">
+                    <img src="~/images/logos/ltd.png" alt="LTD">
+                </div>
+            </a>
+        </div>
+
+        <!-- Brand 3: Jackson -->
+        <div class="col-6 col-sm-4 col-md-2">
+            <a asp-controller="Shop" asp-action="Index" asp-route-selectedBrands="Jackson" class="brand-item">
+                <div class="brand-circle">
+                    <img src="~/images/logos/jackson.png" alt="Jackson">
+                </div>
+            </a>
+        </div>
+
+        <!-- Brand 4: Gibson -->
+        <div class="col-6 col-sm-4 col-md-2">
+            <a asp-controller="Shop" asp-action="Index" asp-route-selectedBrands="Gibson" class="brand-item">
+                <div class="brand-circle">
+                    <img src="~/images/logos/gibson.png" alt="Gibson">
+                </div>
+            </a>
+        </div>
+
+        <!-- Brand 5: Ibanez -->
+        <div class="col-6 col-sm-4 col-md-2">
+            <a asp-controller="Shop" asp-action="Index" asp-route-selectedBrands="Ibanez" class="brand-item">
+                <div class="brand-circle">
+                    <img src="~/images/logos/ibanez.png" alt="Ibanez">
+                </div>
+            </a>
+        </div>
+
+        <!-- Brand 6: Fender -->
+        <div class="col-6 col-sm-4 col-md-2">
+            <a asp-controller="Shop" asp-action="Index" asp-route-selectedBrands="Fender" class="brand-item">
+                <div class="brand-circle">
+                    <img src="~/images/logos/fender.png" alt="Fender">
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- 3. NEW ARRIVALS (Динамично от базата) -->
+<div class="container my-5 pb-5">
+
+    <!-- Заглавие и линк "View All" -->
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom border-dark pb-3">
+        <h2 class="text-uppercase fw-bold section-title no-border m-0">New Arrivals</h2>
+        <a href="@Url.Action("Index", "Shop", new { sortOrder = "newest" })" class="text-muted text-decoration-none view-all-link">
+            View All <i class="fa-solid fa-arrow-right"></i>
+        </a>
+    </div>
+
+    <div class="row">
+        @foreach (var product in Model)
+        {
+            <div class="col-md-3 mb-4">
+                <div class="card product-card h-100 position-relative">
+
+                    <!-- Снимка (използва новия CSS клас) -->
+                    <div class="home-img-container">
+                        <img src="@product.ImagePath" alt="@product.Name">
+                    </div>
+
+                    <div class="card-body d-flex flex-column">
+                        <h6 class="card-subtitle mb-2 text-muted text-uppercase small">@product.Brand</h6>
+
+                        <!-- Заглавие (използва новия CSS клас) -->
+                        <h5 class="card-title text-white home-product-title">
+                            <a href="@Url.Action("Details", "Shop", new { id = product.ProductID })" class="text-white text-decoration-none stretched-link">
+                                @product.Name
+                            </a>
+                        </h5>
+
+                        <div class="mt-auto pt-2">
+                            <p class="card-text fw-bold text-danger fs-5">@product.Price.ToString("N0") €</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 </div>

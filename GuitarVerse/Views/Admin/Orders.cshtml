@@ -1,0 +1,73 @@
+﻿@model List<GuitarVerse.Models.Order>
+@{
+    ViewData["Title"] = "Manage Orders";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">Orders</h2>
+
+    <!-- Филтри -->
+    <div class="btn-group">
+        <a href="@Url.Action("Orders", new { status = "All" })" class="btn btn-outline-dark @(ViewBag.CurrentStatus == "All" ? "active" : "")">All</a>
+        <a href="@Url.Action("Orders", new { status = "Paid" })" class="btn btn-outline-dark @(ViewBag.CurrentStatus == "Paid" ? "active" : "")">Ready to Ship</a>
+        <a href="@Url.Action("Orders", new { status = "Shipped" })" class="btn btn-outline-dark @(ViewBag.CurrentStatus == "Shipped" ? "active" : "")">Shipped</a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                    <th class="text-end">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td>#@order.OrderID</td>
+                        <td>
+                            <div class="fw-bold">@order.FirstName @order.LastName</div>
+                            <div class="text-muted small">@order.Email</div>
+                        </td>
+                        <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>
+                            @if (order.Status == "Paid")
+                            {
+                                <span class="badge bg-success">Paid</span>
+                            }
+                            else if (order.Status == "Shipped")
+                            {
+
+                                <span class="badge bg-primary">Shipped</span>
+                            }
+                            else if (order.Status == "Pending")
+                            {
+
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            }
+                            else
+                            {
+
+                                <span class="badge bg-secondary">@order.Status</span>
+                            }
+                        </td>
+                        <td>@order.TotalAmount.ToString("N2") €</td>
+                        <td class="text-end">
+                            <a href="@Url.Action("OrderDetails", new { id = order.OrderID })" class="btn btn-sm btn-dark">
+                                Manage
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,56 @@
+﻿@model GuitarVerse.Models.EditProfileViewModel
+@{
+    ViewData["Title"] = "Edit Profile";
+}
+
+<div class="profile-wrapper">
+    <div class="container">
+        <div class="profile-form-container">
+            <h2 class="text-uppercase fw-bold mb-4 text-center">Personal Info</h2>
+
+            @if (ViewBag.Message != null)
+            {
+                <div class="alert alert-success">@ViewBag.Message</div>
+            }
+
+            <form method="post">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label text-muted">Email Address</label>
+                        <input asp-for="Email" class="form-control bg-dark text-white border-secondary" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-muted">First Name</label>
+                        <input asp-for="FirstName" class="form-control bg-dark text-white border-secondary" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-muted">Last Name</label>
+                        <input asp-for="LastName" class="form-control bg-dark text-white border-secondary" />
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label text-muted">Phone</label>
+                        <input asp-for="Phone" class="form-control bg-dark text-white border-secondary" />
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label text-muted">Address</label>
+                        <input asp-for="Address" class="form-control bg-dark text-white border-secondary" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-muted">City</label>
+                        <input asp-for="City" class="form-control bg-dark text-white border-secondary" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-muted">Country</label>
+                        <input asp-for="Country" class="form-control bg-dark text-white border-secondary" />
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex gap-3">
+                    <button type="submit" class="btn btn-light flex-grow-1 text-uppercase fw-bold">Save Changes</button>
+                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

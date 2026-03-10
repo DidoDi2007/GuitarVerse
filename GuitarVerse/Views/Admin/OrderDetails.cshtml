@@ -1,0 +1,97 @@
+﻿@model GuitarVerse.Models.Order
+@{
+    ViewData["Title"] = "Order Details";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <a href="@Url.Action("Orders")" class="text-muted text-decoration-none"><i class="fa-solid fa-arrow-left"></i> Back to Orders</a>
+        <h2 class="fw-bold mt-2">Order #@Model.OrderID</h2>
+    </div>
+    <div>
+        <span class="badge bg-dark fs-6">Status: @Model.Status</span>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- LEFT: Order Items -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white fw-bold py-3">Items Ordered</div>
+            <div class="card-body p-0">
+                <table class="table mb-0">
+                    <tbody>
+                        @foreach (var item in Model.OrderDetails)
+                        {
+                            <tr>
+                                <td width="60">
+                                    <img src="@item.Product.ImagePath" style="width: 50px; height: 50px; object-fit: contain;">
+                                </td>
+                                <td>
+                                    <div class="fw-bold">@item.Product.Brand @item.Product.Name</div>
+                                    <div class="text-muted small">Qty: @item.Quantity</div>
+                                </td>
+                                <td class="text-end fw-bold">
+                                    @item.Price.ToString("N2") €
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot class="bg-light">
+                        <tr>
+                            <td colspan="2" class="text-end fw-bold">TOTAL:</td>
+                            <td class="text-end fw-bold text-success fs-5">@Model.TotalAmount.ToString("N2") €</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <!-- SHIPPING ACTION -->
+        @if (Model.Status == "Paid")
+        {
+            <div class="card border-0 shadow-sm border-start border-5 border-primary">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-3">Fulfill Order</h5>
+                    <form asp-action="ShipOrder" method="post" class="row g-3 align-items-end">
+                        <input type="hidden" name="orderId" value="@Model.OrderID" />
+                        <div class="col-md-8">
+                            <label class="form-label text-muted small">Tracking Number (Speedy/DHL)</label>
+                            <input type="text" name="trackingNumber" class="form-control" placeholder="e.g. 123456789" required />
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fa-solid fa-truck-fast me-2"></i> Mark as Shipped
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        }
+        else if (Model.Status == "Shipped")
+        {
+            <div class="alert alert-success">
+                <i class="fa-solid fa-check-circle me-2"></i> This order has been shipped. Tracking: <strong>@Model.TrackingNumber</strong>
+            </div>
+        }
+    </div>
+
+    <!-- RIGHT: Customer Info -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white fw-bold py-3">Customer Details</div>
+            <div class="card-body">
+                <h6 class="fw-bold">@Model.FirstName @Model.LastName</h6>
+                <p class="text-muted mb-4"><a href="mailto:@Model.Email">@Model.Email</a><br>@Model.Phone</p>
+
+                <h6 class="fw-bold text-uppercase small text-muted">Shipping Address</h6>
+                <p class="mb-0">
+                    @Model.Address<br>
+                    @Model.City, @Model.PostalCode<br>
+                    @Model.Country
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

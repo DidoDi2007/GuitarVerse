@@ -1,0 +1,53 @@
+﻿@{
+    ViewData["Title"] = "My Profile";
+}
+
+<div class="profile-wrapper">
+    <div class="container">
+        <h1 class="text-uppercase fw-bold mb-5 text-center">My Account</h1>
+
+        <div class="row g-4 justify-content-center">
+
+            <!-- 1. PERSONAL INFO -->
+            <div class="col-md-4">
+                <a href="@Url.Action("Edit", "Profile")" class="profile-card">
+                    <div class="profile-icon">
+                        <i class="fa-solid fa-user-pen"></i>
+                    </div>
+                    <div class="profile-title">Personal Info</div>
+                    <div class="profile-desc">Edit your name, address, and shipping details.</div>
+                </a>
+            </div>
+
+            <!-- 2. MY ORDERS -->
+            <div class="col-md-4">
+                <a href="@Url.Action("Orders", "Profile")" class="profile-card">
+                    <div class="profile-icon">
+                        <i class="fa-solid fa-box-open"></i>
+                    </div>
+                    <div class="profile-title">My Orders</div>
+                    <div class="profile-desc">View order history and delivery status.</div>
+                </a>
+            </div>
+
+            <!-- 3. SECURITY -->
+            <div class="col-md-4">
+                <a href="@Url.Action("Security", "Profile")" class="profile-card">
+                    <div class="profile-icon">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div class="profile-title">Security</div>
+                    <div class="profile-desc">Update your password.</div>
+                </a>
+            </div>
+
+            <!-- 4. LOGOUT (Малък бутон отдолу) -->
+            <div class="col-12 text-center mt-5">
+                <a href="@Url.Action("Logout", "Account")" class="btn btn-outline-danger px-5 rounded-0 text-uppercase">
+                    Log Out
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>

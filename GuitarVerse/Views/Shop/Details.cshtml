@@ -1,0 +1,254 @@
+﻿@model GuitarVerse.Models.Product
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="details-wrapper">
+    <div class="container">
+
+        <!-- BREADCRUMB -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Shop")" class="text-decoration-none text-muted">SHOP</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Shop", new { brand = Model.Brand })" class="text-decoration-none text-muted">@Model.Brand</a></li>
+                <li class="breadcrumb-item active text-white" aria-current="page">@Model.Name</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <!-- LEFT: GALLERY -->
+            <div class="col-lg-8">
+                <div class="gallery-container">
+                    <!-- Thumbnails -->
+                    <div class="thumbnail-list">
+                        <!-- Главната снимка винаги е първа -->
+                        <img src="@Model.ImagePath" class="thumbnail active" onclick="changeImage(this.src, this)">
+
+                        <!-- Галерията (ако има други снимки) -->
+                        @if (Model.Images != null)
+                        {
+                            foreach (var img in Model.Images.Take(4))
+                            {
+                                <img src="@img.ImagePath" class="thumbnail" onclick="changeImage(this.src, this)">
+                            }
+                        }
+                    </div>
+
+                    <!-- Main Image Display -->
+                    <div class="main-image-container">
+                        <img src="@Model.ImagePath" id="mainImage" class="main-image" alt="@Model.Name">
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: INFO & BUY -->
+            <div class="col-lg-4 ps-lg-5">
+                <div class="brand-label">@Model.Brand</div>
+                <h1 class="product-name-large">@Model.Name</h1>
+
+                <div class="product-price-large">
+                    @Model.Price.ToString("N0") €
+                </div>
+
+                <p class="text-success fw-bold text-uppercase mb-4" style="letter-spacing: 1px;">
+                    <i class="fa-solid fa-check-circle me-2"></i> In Stock & Ready to Ship
+                </p>
+
+                <!-- Buttons add to card, back to shop -->
+                <div class="d-grid gap-2 mb-4">
+
+                    <!-- ФОРМА ЗА ДОБАВЯНЕ В КОЛИЧКАТА -->
+                    <form method="post" asp-controller="Cart" asp-action="AddToCart">
+                        <input type="hidden" name="productId" value="@Model.ProductID" />
+
+                        <!-- Може да добавиш input за Quantity тук, но засега е скрито 1 -->
+                        <input type="hidden" name="quantity" value="1" />
+
+                        <button type="submit" class="btn btn-light btn-lg rounded-0 fw-bold py-3 text-uppercase fs-5 w-100">
+                            ADD TO CART
+                        </button>
+                    </form>
+
+                    <a href="@Url.Action("Index", "Shop")" class="btn btn-outline-secondary rounded-0 text-uppercase">
+                        Back to Shop
+                    </a>
+                </div>
+
+                <ul class="list-unstyled feature-list">
+                    <li><div class="feature-icon"><i class="fa-solid fa-guitar"></i></div> <strong>Body:</strong>&nbsp; @(Model.Category?.Name ?? "Electric")</li>
+                    <li><div class="feature-icon"><i class="fa-solid fa-hand"></i></div> <strong>Orientation:</strong>&nbsp; @Model.Orientation</li>
+                    <li><div class="feature-icon"><i class="fa-solid fa-bolt"></i></div> <strong>Electronics:</strong>&nbsp; @Model.PickupType Pickups</li>
+                    <li><div class="feature-icon"><i class="fa-solid fa-music"></i></div> <strong>Strings:</strong>&nbsp; @Model.NumberOfStrings Strings</li>
+                    <li><div class="feature-icon"><i class="fa-solid fa-bridge"></i></div> <strong>Bridge:</strong>&nbsp; @Model.BridgeType</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- BOTTOM: TABS (OVERVIEW & SPECS) -->
+        <div class="row">
+            <div class="col-12">
+                <ul class="nav nav-tabs" id="productTab" role="tablist">
+                    <li class="nav-item">
+                        <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button">Overview</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="specs-tab" data-bs-toggle="tab" data-bs-target="#specs" type="button">Full Specs</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button">
+                            Reviews (@(Model.Reviews?.Count ?? 0))
+                        </button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="productTabContent">
+
+                    <!-- OVERVIEW TAB -->
+                    <div class="tab-pane fade show active" id="overview">
+                        <div class="row mt-4">
+                            <div class="col-lg-8">
+                                @if (!string.IsNullOrEmpty(Model.Overview))
+                                {
+                                    @Html.Raw(Model.Overview)
+                                }
+                                else
+                                {
+                                    <p>@Model.Description</p>
+                                    <p>Experience the legendary tone and playability that has made @Model.Brand a staple in the music industry. Built with precision and high-quality materials, this instrument is designed to inspire.</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SPECS TAB -->
+                    <div class="tab-pane fade" id="specs">
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <h4 class="text-uppercase text-muted mb-3">General</h4>
+                                <table class="table table-borderless spec-table">
+                                    <tbody>
+                                        <tr><th>Brand</th><td>@Model.Brand</td></tr>
+                                        <tr><th>Model Name</th><td>@Model.Name</td></tr>
+                                        <tr><th>Series</th><td>Professional</td></tr> <!-- Примерно -->
+                                        <tr><th>Orientation</th><td>@Model.Orientation</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <h4 class="text-uppercase text-muted mb-3">Hardware & Electronics</h4>
+                                <table class="table table-borderless spec-table">
+                                    <tbody>
+                                        <tr><th>Number of Strings</th><td>@Model.NumberOfStrings</td></tr>
+                                        <tr><th>Bridge Type</th><td>@Model.BridgeType</td></tr>
+                                        <tr><th>Pickup Configuration</th><td>@Model.PickupType</td></tr>
+                                        <tr><th>Case Included</th><td>No</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- REVIEWS TAB -->
+                    <div class="tab-pane fade" id="reviews">
+                        <div class="row mt-4">
+                            <div class="col-lg-8">
+
+                                <!-- Списък с ревюта -->
+                                @if (Model.Reviews != null && Model.Reviews.Any())
+                                {
+                                    foreach (var review in Model.Reviews.OrderByDescending(r => r.CreatedAt))
+                                    {
+                                        <div class="mb-4 pb-3 border-bottom border-secondary">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <!-- Звездички -->
+                                                    <div class="text-warning small mb-1">
+                                                        @for (int i = 1; i <= 5; i++)
+                                                        {
+                                                            if (i <= review.Rating)
+                                                            {
+                                                                <i class="fa-solid fa-star"></i>
+                                                            }
+                                                            else
+                                                            {
+
+                                                                <i class="fa-regular fa-star"></i>
+                                                            }
+                                                        }
+                                                    </div>
+                                                    <span class="fw-bold">@review.User.Email.Split('@')[0]</span> <!-- Показваме част от имейла като име -->
+                                                </div>
+                                                <small class="text-muted">@review.CreatedAt.ToShortDateString()</small>
+                                            </div>
+                                            <!-- Добавихме класа 'review-text' -->
+                                            <p class="mt-2 text-light review-text">@review.Comment</p>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <p class="text-muted">No reviews yet. Be the first to write one!</p>
+                                }
+
+                                <!-- Форма за добавяне (само ако е логнат) -->
+                                @if (Context.Session.GetInt32("UserID") != null)
+                                {
+                                    <div class="mt-5 p-4 bg-dark border border-secondary rounded">
+                                        <h5 class="text-uppercase mb-3">Write a Review</h5>
+                                        <form asp-action="AddReview" method="post">
+                                            <input type="hidden" name="productId" value="@Model.ProductID" />
+
+                                            <div class="mb-3">
+                                                <label class="form-label text-muted small">Rating</label>
+                                                <div class="rating-css">
+                                                    <!-- Опростен избор на рейтинг -->
+                                                    <select name="rating" class="form-select bg-black text-white border-secondary" style="width: 150px;">
+                                                        <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
+                                                        <option value="4">⭐⭐⭐⭐ (4/5)</option>
+                                                        <option value="3">⭐⭐⭐ (3/5)</option>
+                                                        <option value="2">⭐⭐ (2/5)</option>
+                                                        <option value="1">⭐ (1/5)</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label text-muted small">Your Review</label>
+                                                
+                                                <!-- Добавихме maxlength и oninput -->
+                                                <textarea name="comment"
+                                                      id="reviewInput"
+                                                      class="form-control bg-black text-white border-secondary"
+                                                      rows="3"
+                                                      required
+                                                      maxlength="900"
+                                                      placeholder="Tell us what you think..."
+                                                      style="resize: vertical; max-height: 250px;"
+                                                      oninput="updateCharCount(this)"></textarea>
+
+                                                <!-- Брояч -->
+                                                <div class="text-end mt-1">
+                                                    <small class="text-muted" id="charCount">0 / 900</small>
+                                                </div>
+                                            </div>
+
+                                            <button type="submit" class="btn btn-light text-uppercase fw-bold">Submit Review</button>
+                                        </form>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="mt-4">
+                                        <a href="@Url.Action("Login", "Account")" class="btn btn-outline-light btn-sm">Login to write a review</a>
+                                    </div>
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

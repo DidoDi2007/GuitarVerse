@@ -5,63 +5,166 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - GuitarVerse</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <!-- FontAwesome за иконите -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/GuitarVerse.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
 
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">GuitarVerse</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
 
-                        @if (Context.Session.GetInt32("UserID") == null)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link user-icon" asp-controller="Account" asp-action="Login">
-                                    👤
-                                </a>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Logout">Изход</a>
-                            </li>
-                        }
-                    </ul>
+    <!-- STICKY HEADER CONTAINER -->
+    <header class="fixed-top">
+
+        <!-- ROW 1: Logo, Search, User Icons -->
+        <div class="top-header">
+            <div class="container-fluid d-flex justify-content-between align-items-center">
+
+                <!-- 1. Logo -->
+                <a class="navbar-brand logo-text" asp-controller="Home" asp-action="Index">GUITARVERSE</a>
+
+                <!-- 2. Search Bar (Center) -->
+                <div class="search-container d-none d-md-block">
+                    <form asp-controller="Shop" asp-action="Index" method="get" class="d-flex">
+                        <input class="form-control search-input" type="search" placeholder="Search for products..." aria-label="Search" name="query">
+                        <button class="btn search-btn" type="submit">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </form>
                 </div>
+
+                <!-- 3. Right Icons (Login/Profile, Cart) -->
+                <div class="user-actions d-flex align-items-center">
+
+                    <!-- Profile / Login Logic -->
+                    @if (Context.Session.GetInt32("UserID") != null)
+                    {
+                        <a href="@Url.Action("Index", "Profile")" class="icon-link me-3" title="My Profile">
+                            <i class="fa-regular fa-user"></i>
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("Login", "Account")" class="icon-link me-3" title="Login / Register">
+                            <i class="fa-regular fa-user"></i>
+                        </a>
+                    }
+
+                    <!-- Cart -->
+                    <!-- Cart Icon -->
+                    <a href="@Url.Action("Index", "Cart")" class="icon-link position-relative" title="Shopping Cart">
+                        <i class="fa-solid fa-cart-shopping"></i>
+
+                        <!-- Червеното кръгче с бройката -->
+                        <span id="cartBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; display: none;">
+                            0
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROW 2: Navigation Categories (Hover Dropdowns) -->
+        <nav class="bottom-nav">
+            <div class="container-fluid d-flex justify-content-center">
+                <ul class="nav-links list-unstyled d-flex m-0">
+
+                    <!-- Guitars Dropdown -->
+                    <li class="nav-item dropdown-hover">
+                        <!-- Главният линк води към Електрически китари (ID=1) -->
+                        <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="1" class="nav-link">
+                            GUITARS <i class="fa-solid fa-chevron-down text-muted text-xs"></i>
+                        </a>
+                        <div class="dropdown-menu-custom">
+                            <div class="row">
+                                <div class="col-12">
+                                    <!-- Филтър за Електрически (ID=1) -->
+                                    <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="1">Electric</a>
+
+                                    <!-- Филтър за Акустични (ID=3) -->
+                                    <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="3">Acoustic</a>
+
+                                    <!-- Класически (ID=3 + Търсене за "Classical") -->
+                                    <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="3" asp-route-query="Classical">Classical</a>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- Bass Dropdown -->
+                    <li class="nav-item dropdown-hover">
+                        <!-- Главен линк към Басове (ID=2) -->
+                        <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="2" class="nav-link">
+                            BASS GUITARS <i class="fa-solid fa-chevron-down text-muted"></i>
+                        </a>
+                        <div class="dropdown-menu-custom">
+                            <!-- Филтър за 4 струни -->
+                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="2" asp-route-strings="4">4-String</a>
+
+                            <!-- Филтър за 5 струни -->
+                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="2" asp-route-strings="5">5-String</a>
+
+                            <!-- Търсене за Jazz Bass -->
+                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="2" asp-route-strings="6">6-String</a>
+                        </div>
+                    </li>
+
+                    <!-- Accessories -->
+                    <li class="nav-item dropdown-hover">
+                        <!-- Главен линк към Аксесоари (ID=5) -->
+                        <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="5" class="nav-link">
+                            ACCESSORIES <i class="fa-solid fa-chevron-down text-muted"></i>
+                        </a>
+                        <div class="dropdown-menu-custom">
+                            <!-- Търсене на конкретни думи в категория Аксесоари -->
+                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="5" asp-route-query="Strings">Strings</a>
+                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="5" asp-route-query="Picks">Picks</a>
+                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="5" asp-route-query="Cables">Cables</a>
+                        </div>
+                    </li>
+
+                    <!-- Amps -->
+                    <li class="nav-item dropdown-hover">
+                        <!-- Главен линк към Усилватели (ID=4) -->
+                        <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="4" class="nav-link">
+                            AMPS <i class="fa-solid fa-chevron-down text-muted"></i>
+                        </a>
+                        <div class="dropdown-menu-custom">
+                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="4" asp-route-query="Combo">Combo Amps</a>
+                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="4" asp-route-query="Head">Heads & Cabinets</a>
+                        </div>
+                    </li>
+
+                    <!-- Artists -->
+                    <li class="nav-item">
+                        <!-- Засега може да води към магазина с търсене за "Signature" или конкретна марка -->
+                        <!-- По-късно, ако направим страница Artists/Index, ще го сменим -->
+                        <a asp-controller="Shop" asp-action="Index" asp-route-query="Signature" class="nav-link highlight-hover">ARTISTS</a>
+                    </li>
+
+                </ul>
             </div>
         </nav>
     </header>
-    <div class="container">
+
+    <!-- Main Content -->
+    <div class="main-content">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - GuitarVerse - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <!-- Footer (Опростен за момента) -->
+    <footer class="border-top footer text-muted bg-black">
+        <div class="container text-center text-white">
+            &copy; 2025 - GuitarVerse - <a asp-controller="Home" asp-action="Privacy" class="text-white">Privacy</a>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
-    <script src="~/js/site.js"></script>
 </body>
 </html>

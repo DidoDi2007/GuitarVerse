@@ -1,12 +1,13 @@
-using GuitarVerse.Data;
+Ôªøusing GuitarVerse.Data;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// ƒÓ·‡‚ˇÏÂ ApplicationDbContext
+// √Ñ√Æ√°√†√¢√ø√¨√• ApplicationDbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(
         builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -25,6 +26,11 @@ builder.Services.AddSession(options =>
 // Add Email Service
 builder.Services.AddScoped<GuitarVerse.Services.EmailService>();
 
+// ... –¥—Ä—É–≥–∏ –Ω–∞—Å—Ç—Ä–æ–π–∫–∏ ...
+
+// –ù–∞—Å—Ç—Ä–æ–π–∫–∞ –Ω–∞ Stripe
+StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -39,7 +45,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseSession(); // <- Á‡‰˙ÎÊËÚÂÎÌÓ Á‡ ÍÓÎË˜Í‡Ú‡
+app.UseSession(); // <- √ß√†√§√∫√´√¶√®√≤√•√´√≠√Æ √ß√† √™√Æ√´√®√∑√™√†√≤√†
 app.UseAuthorization();
 
 app.MapControllerRoute(

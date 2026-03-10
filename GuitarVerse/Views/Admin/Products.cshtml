@@ -1,0 +1,62 @@
+﻿@model List<GuitarVerse.Models.Product>
+@{
+    ViewData["Title"] = "Manage Products";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">All Products</h2>
+    <a href="@Url.Action("CreateProduct")" class="btn btn-dark">
+        <i class="fa-solid fa-plus"></i> Add New Product
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">Image</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model)
+                {
+                    <tr>
+                        <td>
+                            <img src="@p.ImagePath" style="width: 50px; height: 50px; object-fit: contain; border: 1px solid #eee;">
+                        </td>
+                        <td>
+                            <strong>@p.Brand</strong><br>
+                            @p.Name
+                        </td>
+                        <td>@p.Category?.Name</td>
+                        <td>@p.Price.ToString("N2") €</td>
+                        <td>
+                            @if (p.Stock > 0)
+                            {
+                                <span class="text-success fw-bold">@p.Stock</span>
+                            }
+                            else
+                            {
+
+                                <span class="text-danger fw-bold">Out of Stock</span>
+                            }
+                        </td>
+                        <td class="text-end">
+                            <form asp-action="DeleteProduct" method="post" style="display:inline;" onsubmit="return confirm('Delete this product?');">
+                                <input type="hidden" name="id" value="@p.ProductID" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
