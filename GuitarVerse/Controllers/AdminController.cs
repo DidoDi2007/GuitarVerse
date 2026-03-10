@@ -80,7 +80,8 @@ namespace GuitarVerse.Controllers
             var model = new ProductFormViewModel
             {
                 Product = new Product(),
-                Categories = _context.Categories.ToList()
+                Categories = _context.Categories.ToList(),
+                Artists = _context.Artists.ToList()
             };
 
             return View(model);
@@ -292,7 +293,8 @@ namespace GuitarVerse.Controllers
             var model = new ProductFormViewModel
             {
                 Product = product,
-                Categories = _context.Categories.ToList()
+                Categories = _context.Categories.ToList(),
+                Artists = _context.Artists.ToList()
             };
 
             return View(model);
@@ -348,6 +350,7 @@ namespace GuitarVerse.Controllers
                 productToUpdate.Description = model.Product.Description;
                 productToUpdate.Overview = model.Product.Overview;
                 productToUpdate.SpecsText = model.Product.SpecsText;
+                productToUpdate.ArtistID = model.Product.ArtistID;
 
                 string wwwRootPath = _hostEnvironment.WebRootPath;
 
@@ -658,6 +661,181 @@ namespace GuitarVerse.Controllers
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction("PromoCodes");
+        }
+
+        // ==========================
+        // ARTISTS MANAGEMENT
+        // ==========================
+
+        // 1. СПИСЪК
+        public async Task<IActionResult> Artists()
+        {
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+            var artists = await _context.Artists.ToListAsync();
+            return View(artists);
+        }
+
+        // 2. ФОРМА ЗА СЪЗДАВАНЕ
+        [HttpGet]
+        public IActionResult CreateArtist()
+        {
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+            return View(new ArtistFormViewModel { Artist = new Artist() });
+        }
+
+        // 3. ЗАПИСВАНЕ
+        [HttpPost]
+        public async Task<IActionResult> CreateArtist(ArtistFormViewModel model)
+        {
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+
+            // Игнорираме string полетата, защото ще ги напълним с файловете
+            ModelState.Remove("Artist.CardImage");
+            ModelState.Remove("Artist.HeroImage");
+            ModelState.Remove("Artist.Products");
+
+            if (ModelState.IsValid)
+            {
+                string wwwRootPath = _hostEnvironment.WebRootPath;
+                string artistPath = Path.Combine(wwwRootPath, "images/artists");
+
+                // Създаваме папка artists, ако я няма
+                if (!Directory.Exists(artistPath)) Directory.CreateDirectory(artistPath);
+
+                // 1. Качване на Card Image (Малката)
+                if (model.CardImageFile != null)
+                {
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.CardImageFile.FileName);
+                    using (var stream = new FileStream(Path.Combine(artistPath, fileName), FileMode.Create))
+                    {
+                        await model.CardImageFile.CopyToAsync(stream);
+                    }
+                    model.Artist.CardImage = "/images/artists/" + fileName;
+                }
+
+                // 2. Качване на Hero Image (Голямата)
+                if (model.HeroImageFile != null)
+                {
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.HeroImageFile.FileName);
+                    using (var stream = new FileStream(Path.Combine(artistPath, fileName), FileMode.Create))
+                    {
+                        await model.HeroImageFile.CopyToAsync(stream);
+                    }
+                    model.Artist.HeroImage = "/images/artists/" + fileName;
+                }
+
+                // 3. Почистване на HTML в Биографията (XSS защита)
+                if (!string.IsNullOrEmpty(model.Artist.Bio))
+                {
+                    var sanitizer = new Ganss.Xss.HtmlSanitizer();
+                    model.Artist.Bio = sanitizer.Sanitize(model.Artist.Bio);
+                }
+
+                _context.Artists.Add(model.Artist);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Artists");
+            }
+
+            return View(model);
+        }
+
+        // 4. ИЗТРИВАНЕ
+        [HttpPost]
+        public async Task<IActionResult> DeleteArtist(int id)
+        {
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+            var artist = await _context.Artists.FindAsync(id);
+            if (artist != null)
+            {
+                _context.Artists.Remove(artist);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction("Artists");
+        }
+
+        // 5. РЕДАКТИРАНЕ (GET)
+        [HttpGet]
+        public async Task<IActionResult> EditArtist(int id)
+        {
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+
+            var artist = await _context.Artists.FindAsync(id);
+            if (artist == null) return NotFound();
+
+            var model = new ArtistFormViewModel
+            {
+                Artist = artist
+            };
+
+            return View(model);
+        }
+
+        // 6. РЕДАКТИРАНЕ (POST)
+        [HttpPost]
+        public async Task<IActionResult> EditArtist(int id, ArtistFormViewModel model)
+        {
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+
+            // Игнорираме валидацията за снимките (защото може да не качва нови)
+            ModelState.Remove("Artist.CardImage");
+            ModelState.Remove("Artist.HeroImage");
+            ModelState.Remove("Artist.Products");
+            ModelState.Remove("CardImageFile");
+            ModelState.Remove("HeroImageFile");
+
+            if (ModelState.IsValid)
+            {
+                var artistToUpdate = await _context.Artists.FindAsync(id);
+                if (artistToUpdate == null) return NotFound();
+
+                // Обновяваме текстовите полета
+                artistToUpdate.Name = model.Artist.Name;
+                artistToUpdate.Band = model.Artist.Band;
+
+                // Санитизиране на биографията (XSS защита)
+                if (!string.IsNullOrEmpty(model.Artist.Bio))
+                {
+                    var sanitizer = new Ganss.Xss.HtmlSanitizer();
+                    artistToUpdate.Bio = sanitizer.Sanitize(model.Artist.Bio);
+                }
+                else
+                {
+                    artistToUpdate.Bio = model.Artist.Bio;
+                }
+
+                string wwwRootPath = _hostEnvironment.WebRootPath;
+                string artistPath = Path.Combine(wwwRootPath, "images/artists");
+
+                // --- ЛОГИКА ЗА СНИМКИТЕ ---
+
+                // 1. Ако има нова Card Image
+                if (model.CardImageFile != null)
+                {
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.CardImageFile.FileName);
+                    using (var stream = new FileStream(Path.Combine(artistPath, fileName), FileMode.Create))
+                    {
+                        await model.CardImageFile.CopyToAsync(stream);
+                    }
+                    artistToUpdate.CardImage = "/images/artists/" + fileName;
+                }
+
+                // 2. Ако има нова Hero Image
+                if (model.HeroImageFile != null)
+                {
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.HeroImageFile.FileName);
+                    using (var stream = new FileStream(Path.Combine(artistPath, fileName), FileMode.Create))
+                    {
+                        await model.HeroImageFile.CopyToAsync(stream);
+                    }
+                    artistToUpdate.HeroImage = "/images/artists/" + fileName;
+                }
+
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Artists");
+            }
+
+            return View(model);
         }
 
 

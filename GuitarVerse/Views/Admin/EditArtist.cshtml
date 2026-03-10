@@ -1,0 +1,67 @@
+﻿@model GuitarVerse.Models.ArtistFormViewModel
+@{
+    ViewData["Title"] = "Edit Artist";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container" style="max-width: 800px;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-dark">Edit Artist</h2>
+        <a href="@Url.Action("Artists")" class="btn btn-outline-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Back to List
+        </a>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+
+            <input type="hidden" asp-for="Artist.ArtistID" />
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Artist Name</label>
+                    <input asp-for="Artist.Name" class="form-control" required />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Band Name</label>
+                    <input asp-for="Artist.Band" class="form-control" required />
+                </div>
+            </div>
+
+            <!-- CARD IMAGE -->
+            <div class="row mt-4 align-items-center">
+                <div class="col-md-3 text-center">
+                    <label class="small text-muted mb-1">Current Card:</label><br>
+                    <img src="@Model.Artist.CardImage" style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%;">
+                </div>
+                <div class="col-md-9">
+                    <label class="form-label fw-bold">Change Card Image (Small)</label>
+                    <input asp-for="CardImageFile" type="file" class="form-control" accept="image/*" />
+                    <div class="form-text">Leave empty to keep current image.</div>
+                </div>
+            </div>
+
+            <!-- HERO IMAGE -->
+            <div class="row mt-3 align-items-center">
+                <div class="col-md-3 text-center">
+                    <label class="small text-muted mb-1">Current Hero:</label><br>
+                    <img src="@Model.Artist.HeroImage" style="width: 100px; height: 60px; object-fit: cover; border-radius: 4px;">
+                </div>
+                <div class="col-md-9">
+                    <label class="form-label fw-bold">Change Hero Image (Large)</label>
+                    <input asp-for="HeroImageFile" type="file" class="form-control" accept="image/*" />
+                    <div class="form-text">Leave empty to keep current image.</div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <label class="form-label fw-bold">Biography (HTML)</label>
+                <textarea asp-for="Artist.Bio" class="form-control font-monospace" rows="8"></textarea>
+            </div>
+
+            <div class="text-end pt-4">
+                <button type="submit" class="btn btn-primary px-5 fw-bold text-uppercase">Save Changes</button>
+            </div>
+        </div>
+    </form>
+</div>

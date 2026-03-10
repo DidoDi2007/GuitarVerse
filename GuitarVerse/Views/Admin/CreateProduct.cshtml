@@ -33,6 +33,25 @@
                         }
                     </select>
                 </div>
+
+
+                @* Падащо меню за артисти!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! *@
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Signature Artist (Optional)</label>
+                    <select asp-for="Product.ArtistID" class="form-select">
+                        <option value="">-- None --</option>
+                        @if (Model.Artists != null)
+                        {
+                            @foreach (var artist in Model.Artists)
+                            {
+                                <option value="@artist.ArtistID">@artist.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+
+
                 <div class="col-md-4">
                     <label class="form-label fw-bold">Price (€)</label>
                     <div class="input-group">

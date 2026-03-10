@@ -1,0 +1,48 @@
+﻿@model GuitarVerse.Models.ArtistFormViewModel
+@{
+    ViewData["Title"] = "Add Artist";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container" style="max-width: 800px;">
+    <h2 class="fw-bold mb-4">Add New Artist</h2>
+
+    <form method="post" enctype="multipart/form-data" class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Artist Name</label>
+                    <input asp-for="Artist.Name" class="form-control" placeholder="e.g. Dave Mustaine" required />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Band Name</label>
+                    <input asp-for="Artist.Band" class="form-control" placeholder="e.g. Megadeth" required />
+                </div>
+            </div>
+
+            <div class="row g-3 mt-2">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Card Image (Small)</label>
+                    <input asp-for="CardImageFile" type="file" class="form-control" accept="image/*" required />
+                    <div class="form-text">Square image for the list.</div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Hero Image (Large)</label>
+                    <input asp-for="HeroImageFile" type="file" class="form-control" accept="image/*" required />
+                    <div class="form-text">Wide horizontal image for the header.</div>
+                </div>
+            </div>
+
+            <div class="mt-3">
+                <label class="form-label fw-bold">Biography (HTML)</label>
+                <textarea asp-for="Artist.Bio" class="form-control font-monospace" rows="6" placeholder="<p>Bio goes here...</p>"></textarea>
+            </div>
+
+            <div class="text-end pt-4">
+                <a href="@Url.Action("Artists")" class="btn btn-outline-secondary me-2">Cancel</a>
+                <button type="submit" class="btn btn-dark px-4">Save Artist</button>
+            </div>
+        </div>
+    </form>
+</div>

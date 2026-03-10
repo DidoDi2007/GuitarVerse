@@ -12,5 +12,6 @@ namespace GuitarVerse.Models
 
         // НОВО: Списък за галерията
         public List<IFormFile>? GalleryFiles { get; set; }
+        public IEnumerable<Artist>? Artists { get; set; }
     }
 }

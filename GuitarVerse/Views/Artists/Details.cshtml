@@ -1,0 +1,50 @@
+﻿@model GuitarVerse.Models.Artist
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<!-- 1. HERO SECTION -->
+<div class="artist-hero" style="background-image: url('@Model.HeroImage');">
+    <div class="artist-hero-overlay"></div>
+    <div class="artist-hero-content">
+        <h1 class="artist-hero-name">@Model.Name</h1>
+        <div class="separator"></div>
+        <div class="artist-hero-band">@Model.Band</div>
+    </div>
+</div>
+
+<!-- 2. BIO SECTION -->
+<div class="container mt-5">
+    <div class="artist-bio">
+        @Html.Raw(Model.Bio)
+    </div>
+
+    <!-- 3. GEAR SECTION (Квадратчетата) -->
+    @if (Model.Products != null && Model.Products.Any())
+    {
+        <h2 class="gear-title">The Collection</h2>
+
+        <div class="row g-4 justify-content-center mb-5">
+            @foreach (var product in Model.Products)
+            {
+                <div class="col-md-3">
+                    <!-- Използваме същия дизайн като в магазина -->
+                    <div class="card shop-card h-100 position-relative">
+                        <div class="shop-img-box" style="height: 250px; background: #eee; display: flex; align-items: center; justify-content: center; padding: 10px;">
+                            <img src="@product.ImagePath" alt="@product.Name" style="max-height: 100%; max-width: 100%; object-fit: contain; mix-blend-mode: multiply;">
+                        </div>
+                        <div class="card-body px-0 pt-3 text-center">
+                            <div class="text-muted small text-uppercase mb-1">@product.Brand</div>
+                            <h6 class="text-dark fw-bold text-uppercase px-2" style="height: 40px; overflow: hidden;">
+                                <a href="@Url.Action("Details", "Shop", new { id = product.ProductID })" class="text-decoration-none text-dark stretched-link">
+                                    @product.Name
+                                </a>
+                            </h6>
+                            <div class="fw-bold fs-5 text-dark mt-2">@product.Price.ToString("N0") €</div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

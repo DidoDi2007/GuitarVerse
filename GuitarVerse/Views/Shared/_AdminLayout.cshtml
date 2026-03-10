@@ -60,9 +60,15 @@
                     <i class="fa-solid fa-envelope"></i> Messages
                 </a>
 
+                <a href="@Url.Action("Artists", "Admin")" class="nav-link @(currentAction == "Artists" ? "active" : "")">
+                    <i class="fa-solid fa-envelope"></i> Artists
+                </a>
+
                 <a href="@Url.Action("PromoCodes", "Admin")" class="nav-link @(currentAction == "PromoCodes" ? "active" : "")">
                     <i class="fa-solid fa-envelope"></i> PromoCodes
                 </a>
+
+                
                 
 
 

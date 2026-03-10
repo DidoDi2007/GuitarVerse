@@ -1,0 +1,28 @@
+﻿@model List<GuitarVerse.Models.Artist>
+@{
+    ViewData["Title"] = "Artists";
+}
+
+
+<div class="artists-header">
+    <div class="artists-overlay"></div>
+    <h1 class="artists-title">Icons of Metal</h1>
+</div>
+
+<div class="container pb-5">
+    <div class="row g-4">
+        @foreach (var artist in Model)
+        {
+            <div class="col-md-4">
+                <!-- ВОДИ КЪМ НОВАТА СТРАНИЦА Details -->
+                <a asp-action="Details" asp-route-id="@artist.ArtistID" class="artist-card">
+                    <img src="@artist.CardImage" class="artist-img" alt="@artist.Name">
+                    <div class="artist-info">
+                        <div class="artist-band">@artist.Band</div>
+                        <div class="artist-name">@artist.Name</div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+</div>

@@ -187,48 +187,6 @@ header.fixed-top {
     color: #e74c3c !important;
 }
 
-/* =========================================
-    HOME PAGE SPECIFIC STYLES, Начална страница, NEW ARRIVALS
-   ========================================= */
-
-/* Махане на долната линия на заглавието само тук */
-.section-title.no-border {
-    border-bottom: none;
-}
-
-/* Кутията за снимката на началната страница */
-.home-img-container {
-    height: 250px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #fff;
-    padding: 10px;
-    border-bottom: 1px solid #333;
-}
-
-    /* Самата снимка */
-    .home-img-container img {
-        max-height: 100%;
-        max-width: 100%;
-        object-fit: contain;
-        transition: transform 0.3s ease;
-    }
-
-/* Ефект при ховър върху картата */
-.product-card:hover .home-img-container img {
-    transform: scale(1.05); /* Леко увеличение */
-}
-
-/* Заглавието на продукта */
-.home-product-title {
-    font-size: 1rem;
-    height: 40px; /* Фиксирана височина за 2 реда */
-    overflow: hidden;
-    margin-bottom: 10px;
-    line-height: 1.2;
-}
 
 
 
@@ -375,19 +333,57 @@ footer {
 /* =========================================
    5. HOME PAGE STYLES
    ========================================= */
-
-/* HERO SECTION (Full Width) */
+/* HERO SECTION WRAPPER */
 .hero-section {
     position: relative;
-    /* Тази снимка ще се разпъне на 100% от ширината */
     width: 100%;
-    /* Височина - 85% от екрана, за да е внушително */
-    height: 110vh;
-    /* Смени линка с твоя снимка */
-    background-size: cover;
-    background-position: center;
-    /* Премахваме margin-top, защото махнахме container-а в Layout */
+    height: auto; /* ВАЖНО: Височината вече зависи от снимката */
     margin-top: 0;
+    overflow: hidden; /* За да не излиза нищо извън рамките */
+    display: block; /* Уверяваме се, че е блок елемент */
+}
+
+/* САМАТА СНИМКА */
+.hero-bg-img {
+    width: 100%; /* Заема цялата ширина */
+    height: auto; /* Височината се смята автоматично според пропорцията */
+    display: block; /* Премахва дупката под снимката, характерна за img */
+    object-fit: contain; /* Гарантира, че се вижда цялата */
+}
+
+/* OVERLAY (Затъмняването) */
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4); /* Леко затъмняване, за да се чете текста */
+    z-index: 1; /* Да е над снимката */
+}
+
+/* СЪДЪРЖАНИЕТО (Текст и бутони) */
+.hero-content {
+    position: absolute; /* Плува върху снимката */
+    top: 50%; /* Центриране вертикално */
+    left: 50%; /* Центриране хоризонтално */
+    transform: translate(-50%, -50%); /* Фина настройка за идеален център */
+    z-index: 2; /* Да е най-отгоре (над overlay-a) */
+    width: 100%; /* Да има място за текста */
+}
+
+/* Ефект при ховър върху картата */
+.product-card:hover .home-img-container img {
+    transform: scale(1.05); /* Леко увеличение */
+}
+
+/* Заглавието на продукта */
+.home-product-title {
+    font-size: 1rem;
+    height: 40px; /* Фиксирана височина за 2 реда */
+    overflow: hidden;
+    margin-bottom: 10px;
+    line-height: 1.2;
 }
 
 /* Текста на началната снимка */
@@ -1276,3 +1272,165 @@ textarea.form-control {
     word-break: break-word; /* Гаранция, че дългата дума ще се пренесе */
     max-width: 100%; /* Да не излиза от контейнера */
 }
+
+
+/* =========================================
+   12. Artists
+   ========================================= */
+
+.artists-header {
+    height: 200px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 50px;
+}
+
+.artists-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+}
+
+.artists-title {
+    position: relative;
+    z-index: 1;
+    color: #fff;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 3rem;
+    letter-spacing: 5px;
+}
+
+.artist-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    cursor: pointer;
+    height: 400px;
+    display: block;
+}
+
+.artist-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.artist-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    padding: 30px 20px;
+}
+
+.artist-name {
+    color: #fff;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.artist-band {
+    color: #c0392b;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+.artist-card:hover .artist-img {
+    transform: scale(1.1);
+}
+
+
+/* Hero Image на Артиста */
+.artist-hero {
+    height: 90vh;
+    width: 100%;
+    background-size: cover;
+    background-position: center top;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 50px;
+}
+
+.artist-hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, #0c0c0c 0%, rgba(0,0,0,0) 60%);
+}
+
+.artist-hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: #fff;
+}
+
+.artist-hero-name {
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 4rem;
+    margin: 0;
+    line-height: 1;
+    text-shadow: 0 5px 15px rgba(0,0,0,0.8);
+}
+
+.artist-hero-band {
+    font-size: 1.2rem;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: #888;
+    margin-top: 10px;
+}
+
+.separator {
+    width: 100px;
+    height: 3px;
+    background-color: #c0392b;
+    margin: 20px auto;
+}
+
+/* BIO Section */
+.artist-bio {
+    max-width: 900px;
+    margin: 0 auto 80px;
+    text-align: center;
+    font-size: 1.1rem;
+    color: #ccc;
+    line-height: 1.8;
+}
+
+/* Artist's Gear Section */
+.gear-title {
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 40px;
+    font-size: 2rem;
+}
+
+/* Product Card override (по-малък за тази страница) */
+.shop-card {
+    background: #fff;
+    border: none;
+    transition: transform 0.2s;
+}
+
+    .shop-card:hover {
+        transform: translateY(-5px);
+    }
