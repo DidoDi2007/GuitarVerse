@@ -121,9 +121,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 <div class="card shop-card h-100 position-relative">
                     <div class="shop-img-box">
                         <img src="${product.imagePath}" alt="${product.name}">
-                        <button type="button" class="btn-compare-add" onclick="addToCompare(${product.productID}, event)" title="Compare">
-                        <i class="fa-solid fa-scale-balanced"></i>
-                        </button>
                     </div>
                     <div class="card-body px-0 pt-2 text-center">
                         <div class="product-meta mb-1">${product.brand}</div>
@@ -325,10 +322,9 @@ document.addEventListener("DOMContentLoaded", function () {
 // Сравнение на продукти
 // ------------------------------
 
-function addToCompare(productId, event) {
-    event.preventDefault(); // Спираме отварянето на Details
-    event.stopPropagation(); // Спираме stretched-link
 
+// 1. Добавяне
+function addToCompare(productId) {
     fetch('/Compare/Add/' + productId, {
         method: 'POST',
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
@@ -336,11 +332,78 @@ function addToCompare(productId, event) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert("Added to comparison! Total: " + data.count);
-                // Опционално: Може да пренасочим директно
-                // window.location.href = '/Compare';
+                updateCompareBanner();
             } else {
                 alert(data.message);
             }
         });
 }
+
+// 2. Изтриване на всички
+function clearCompare() {
+    fetch('/Compare/ClearAll', { method: 'POST' })
+        .then(() => updateCompareBanner());
+}
+
+// 3. Изтриване на ЕДИН продукт
+function removeCompareItem(productId) {
+    fetch('/Compare/RemoveItem/' + productId, {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) updateCompareBanner();
+        });
+}
+
+// 4. Ръчно затваряне на прозореца
+function closeComparePopup() {
+    document.getElementById('comparePopup').style.display = 'none';
+}
+
+// 5. Обновяване на интерфейса
+function updateCompareBanner() {
+    fetch('/Compare/GetCompareData')
+        .then(response => response.json())
+        .then(products => {
+            const popup = document.getElementById('comparePopup');
+            const container = document.getElementById('compareItemsContainer');
+            const btnGo = document.getElementById('btnGoCompare');
+            const badge = document.getElementById('compareBadge');
+
+            if (products && products.length > 0) {
+                popup.style.display = 'block'; // Показваме прозореца
+                container.innerHTML = '';
+
+                // Обновяваме бройката в червеното кръгче
+                badge.innerText = products.length;
+
+                products.forEach(p => {
+                    container.innerHTML += `
+                    <div class="compare-item" title="${p.brand} ${p.name}">
+                        <div class="compare-item-img-box">
+                            <img src="${p.imagePath}" alt="${p.name}">
+                            <!-- Бутонче за триене на този конкретен продукт -->
+                            <button class="compare-item-remove" onclick="removeCompareItem(${p.productID})">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                        <div class="compare-item-name">${p.brand}<br>${p.name}</div>
+                    </div>
+                `;
+                });
+
+                // Отключваме бутона "Compare" само ако има поне 2 продукта
+                if (products.length >= 2) {
+                    btnGo.classList.remove('disabled');
+                } else {
+                    btnGo.classList.add('disabled');
+                }
+            } else {
+                popup.style.display = 'none'; // Скриваме го, ако е празно
+            }
+        });
+}
+
+document.addEventListener("DOMContentLoaded", updateCompareBanner);

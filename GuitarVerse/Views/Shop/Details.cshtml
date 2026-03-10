@@ -92,6 +92,11 @@
                     </div>
                 }
 
+                <!-- НОВИЯТ БУТОН ЗА СРАВНЕНИЕ -->
+                <button type="button" onclick="addToCompare(@Model.ProductID)" class="btn btn-outline-info rounded-0 text-uppercase fw-bold w-100 mb-2">
+                    <i class="fa-solid fa-scale-balanced me-2"></i> Add to Compare
+                </button>
+
                 <a href="@Url.Action("Index", "Shop")" class="btn btn-outline-secondary rounded-0 text-uppercase w-100">
                     Back to Shop
                 </a>

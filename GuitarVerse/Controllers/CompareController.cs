@@ -66,5 +66,41 @@ namespace GuitarVerse.Controllers
         {
             HttpContext.Session.SetString(CompareSessionKey, JsonConvert.SerializeObject(list));
         }
+
+        // 4. ВЗИМАНЕ НА ДАННИ ЗА ЛЕНТАТА (AJAX)
+        [HttpGet]
+        public async Task<IActionResult> GetCompareData()
+        {
+            var compareList = GetCompareList();
+
+            // Взимаме само ID, Име и Снимка, за да е лека заявката
+            var products = await _context.Products
+                .Where(p => compareList.Contains(p.ProductID))
+                .Select(p => new { p.ProductID, p.Name, p.ImagePath })
+                .ToListAsync();
+
+            return Json(products);
+        }
+
+        // 5. ИЗЧИСТВАНЕ НА ВСИЧКО
+        [HttpPost]
+        public IActionResult ClearAll()
+        {
+            SaveCompareList(new List<int>()); // Записваме празен списък
+            return Json(new { success = true });
+        }
+
+        // 6. ПРЕМАХВАНЕ НА ЕДИН ПРОДУКТ (AJAX)
+        [HttpPost]
+        public IActionResult RemoveItem(int id)
+        {
+            var compareList = GetCompareList();
+            if (compareList.Contains(id))
+            {
+                compareList.Remove(id);
+                SaveCompareList(compareList);
+            }
+            return Json(new { success = true });
+        }
     }
 }

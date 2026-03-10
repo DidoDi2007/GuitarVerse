@@ -199,11 +199,6 @@
         </div>
     </footer>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
-
 
 
     <!-- ==========================
@@ -254,5 +249,49 @@
             });
         });
     </script>
+
+
+    <!-- FLOATING COMPARE POPUP (Thomann Style) -->
+    <div id="comparePopup" class="compare-popup" style="display: none;">
+        <!-- Хедър с хиксче за затваряне -->
+        <div class="compare-popup-header">
+            <span class="fw-bold text-uppercase" style="letter-spacing: 1px; font-size: 0.9rem;">
+                <i class="fa-solid fa-scale-balanced text-info me-2"></i> Compare
+            </span>
+            <button type="button" class="btn-close btn-close-white" onclick="closeComparePopup()" style="font-size: 0.7rem;"></button>
+        </div>
+
+        <!-- Тяло на прозореца -->
+        <div class="compare-popup-body d-flex align-items-center">
+
+            <!-- Тук ще се зареждат снимките от JavaScript -->
+            <div id="compareItemsContainer" class="compare-items-container d-flex gap-3">
+            </div>
+
+            <!-- Бутоните отдясно -->
+            <div class="compare-actions ms-4 ps-4 border-start border-secondary d-flex flex-column justify-content-center align-items-center">
+
+                <a href="@Url.Action("Index", "Compare")" id="btnGoCompare" class="btn btn-light rounded-pill px-4 py-2 fw-bold mb-3 position-relative disabled transition-all">
+                    Compare
+                    <!-- Червеното кръгче с бройката -->
+                    <span id="compareBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.7rem; border: 2px solid #1a1a1a;">
+                        0
+                    </span>
+                </a>
+
+                <button onclick="clearCompare()" class="btn btn-link text-muted p-0 text-decoration-none small" style="font-size: 0.85rem;">
+                    <i class="fa-solid fa-trash-can me-1"></i> Delete all
+                </button>
+
+            </div>
+        </div>
+    </div>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>
