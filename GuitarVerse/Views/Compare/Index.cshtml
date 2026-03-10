@@ -1,0 +1,100 @@
+﻿@model List<GuitarVerse.Models.Product>
+@{
+    ViewData["Title"] = "Compare Products";
+}
+
+<div class="container-fluid px-5 py-5 text-white">
+    <h1 class="text-uppercase fw-bold mb-5">Product Comparison</h1>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <h3>No products selected for comparison.</h3>
+            <a href="/Shop" class="btn btn-light rounded-0 mt-3">Go to Shop</a>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table compare-table">
+                <thead>
+                    <tr>
+                        <th></th> <!-- Празно за заглавията на редовете -->
+                        @foreach (var p in Model)
+                        {
+                            <td>
+                                <a href="@Url.Action("Remove", new { id = p.ProductID })" class="text-danger float-end"><i class="fa-solid fa-xmark"></i></a>
+                                <img src="@p.ImagePath" style="height: 150px; object-fit: contain; background: #fff; padding: 10px; border-radius: 4px;" class="mb-3">
+                                <h6 class="fw-bold">@p.Brand @p.Name</h6>
+                                <div class="text-success fw-bold">@p.Price.ToString("N0") €</div>
+                            </td>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Category</th>
+                        @foreach (var p in Model)
+                        {
+                            <td>@p.Category.Name</td>
+                        }
+                    </tr>
+                    <tr>
+                        <th>Type</th>
+                        @foreach (var p in Model)
+                        {
+                            <td>@(p.SubType ?? "N/A")</td>
+                        }
+                    </tr>
+                    <tr>
+                        <th>Orientation</th>
+                        @foreach (var p in Model)
+                        {
+                            <td>@(p.Orientation ?? "-")</td>
+                        }
+                    </tr>
+                    <tr>
+                        <th>Strings</th>
+                        @foreach (var p in Model)
+                        {
+                            <td>@(p.NumberOfStrings?.ToString() ?? "-")</td>
+                        }
+                    </tr>
+                    <tr>
+                        <th>Pickups</th>
+                        @foreach (var p in Model)
+                        {
+                            <td>@(p.PickupType ?? "-")</td>
+                        }
+                    </tr>
+                    <tr>
+                        <th>Bridge</th>
+                        @foreach (var p in Model)
+                        {
+                            <td>@(p.BridgeType ?? "-")</td>
+                        }
+                    </tr>
+                    <tr>
+                        <th>Availability</th>
+                        @foreach (var p in Model)
+                        {
+                            <td>@(p.Stock > 0 ? "In Stock" : "Out of Stock")</td>
+                        }
+                    </tr>
+                    <tr>
+                        <th></th>
+                        @foreach (var p in Model)
+                        {
+                            <td>
+                                <form method="post" asp-controller="Cart" asp-action="AddToCart">
+                                    <input type="hidden" name="productId" value="@p.ProductID" />
+                                    <button class="btn btn-sm btn-outline-light rounded-0 w-100">ADD TO CART</button>
+                                </form>
+                            </td>
+                        }
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

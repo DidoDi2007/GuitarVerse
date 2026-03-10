@@ -207,8 +207,12 @@
                                         <div class="col-6 col-md-4 col-lg-3">
                                             <!-- Добавяме 'position-relative', за да работи stretched-link -->
                                             <div class="card shop-card h-100 position-relative">
-                                                <div class="shop-img-box">
+                                                <div class="shop-img-box position-relative">
                                                     <img src="@product.ImagePath" alt="@product.Name">
+                                                    <!-- Бутон за сравнение -->
+                                                    <button type="button" class="btn-compare-add" onclick="addToCompare(@product.ProductID, event)" title="Compare">
+                                                        <i class="fa-solid fa-scale-balanced"></i>
+                                                    </button>
                                                 </div>
                                                 <div class="card-body px-0 pt-2 text-center">
                                                     <div class="product-meta mb-1">@product.Brand</div>

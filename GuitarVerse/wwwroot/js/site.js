@@ -121,6 +121,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 <div class="card shop-card h-100 position-relative">
                     <div class="shop-img-box">
                         <img src="${product.imagePath}" alt="${product.name}">
+                        <button type="button" class="btn-compare-add" onclick="addToCompare(${product.productID}, event)" title="Compare">
+                        <i class="fa-solid fa-scale-balanced"></i>
+                        </button>
                     </div>
                     <div class="card-body px-0 pt-2 text-center">
                         <div class="product-meta mb-1">${product.brand}</div>
@@ -170,11 +173,21 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => console.error("Error:", error));
     }
 
-    // Слушатели
+    // 1. Слушател за Checkbox и Radio (те остават на "change", защото са мигновени)
     form.addEventListener("change", function (e) {
-        if (e.target.classList.contains("auto-submit") || e.target.classList.contains("auto-input")) {
+        if (e.target.classList.contains("auto-submit")) {
             updateProducts();
         }
+    });
+
+    // 2. Слушател за Цената (auto-input) - работи докато пишеш (input събитие)
+    let priceTimer;
+    document.querySelectorAll(".auto-input").forEach(input => {
+        input.addEventListener("input", () => {
+            clearTimeout(priceTimer);
+            // Чакаме 600 милисекунди след последното натискане на клавиш, преди да филтрираме
+            priceTimer = setTimeout(updateProducts, 600);
+        });
     });
 
     if (searchInput) {
@@ -303,3 +316,31 @@ document.addEventListener("DOMContentLoaded", function () {
         sessionStorage.setItem("welcomeToastShown", "true");
     }
 });
+
+
+
+
+
+// ------------------------------
+// Сравнение на продукти
+// ------------------------------
+
+function addToCompare(productId, event) {
+    event.preventDefault(); // Спираме отварянето на Details
+    event.stopPropagation(); // Спираме stretched-link
+
+    fetch('/Compare/Add/' + productId, {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Added to comparison! Total: " + data.count);
+                // Опционално: Може да пренасочим директно
+                // window.location.href = '/Compare';
+            } else {
+                alert(data.message);
+            }
+        });
+}
