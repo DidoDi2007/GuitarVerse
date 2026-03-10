@@ -722,7 +722,7 @@ footer {
 .thumbnail-list {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 10px; /* Беше 15px или 20px, направи го 10px */
 }
 
 .thumbnail {
@@ -742,14 +742,16 @@ footer {
         box-shadow: 0 0 10px rgba(255,255,255,0.2);
     }
 
+/* Увеличаваме височината на главната кутия, за да има място за 6-те малки отстрани */
 .main-image-container {
     flex-grow: 1;
-    background: #fff; /* Бял фон за снимката, както при Jackson */
+    background: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     border: 1px solid #333;
-    height: 600px; /* Висока снимка */
+    /* Увеличи го на 600px (беше 500px) */
+    height: 600px;
     position: relative;
     border-radius: 4px;
 }

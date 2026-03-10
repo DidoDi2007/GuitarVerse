@@ -41,8 +41,19 @@
                 </a>
             </div>
 
-            <!-- 4. LOGOUT (Малък бутон отдолу) -->
-            <div class="col-12 text-center mt-5">
+            <!-- --- ADMIN BUTTON (Видим само за Admin) --- -->
+            @if (Context.Session.GetString("UserRole") == "admin")
+            {
+                <div class="col-12 text-center mt-4">
+                    <a href="@Url.Action("Dashboard", "Admin")" class="btn btn-warning px-5 py-3 rounded-0 text-uppercase fw-bold shadow-lg">
+                        <i class="fa-solid fa-screwdriver-wrench me-2"></i> Go to Admin Panel
+                    </a>
+                </div>
+            }
+
+            <!-- 4. LOGOUT -->
+            <div class="col-12 text-center mt-3">
+                <!-- Смених mt-5 на mt-3 за да са по-близо -->
                 <a href="@Url.Action("Logout", "Account")" class="btn btn-outline-danger px-5 rounded-0 text-uppercase">
                     Log Out
                 </a>

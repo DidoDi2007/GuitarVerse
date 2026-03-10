@@ -91,10 +91,13 @@
                     <div class="form-text">This will be shown in the catalog.</div>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label fw-bold">Gallery Images</label>
-                    <!-- ВАЖНО: multiple позволява избор на много файлове -->
+                    <label class="form-label fw-bold">Gallery Images (Max 5)</label> <!-- Промених текста -->
                     <input asp-for="GalleryFiles" type="file" class="form-control" accept="image/*" multiple />
-                    <div class="form-text">Select multiple images for the details page (Ctrl + Click).</div>
+
+                    <!-- ТОВА ЩЕ ПОКАЖЕ ГРЕШКАТА В ЧЕРВЕНО -->
+                    <span asp-validation-for="GalleryFiles" class="text-danger small"></span>
+
+                    <div class="form-text">Select up to 5 images for the details page (Ctrl + Click).</div>
                 </div>
             </div>
 

@@ -94,6 +94,13 @@ namespace GuitarVerse.Controllers
             // 3. Игнорираме списъка с категории (той служи само за визуализация)
             ModelState.Remove("Categories");       // <--- Това оправя "Categories field is required"
 
+            // --- НОВА ПРОВЕРКА ЗА ЛИМИТ НА СНИМКИТЕ ---
+            if (model.GalleryFiles != null && model.GalleryFiles.Count > 5)
+            {
+                // Добавяме грешка към модела. Тя ще се покаже под полето за файлове.
+                ModelState.AddModelError("GalleryFiles", "You can upload a maximum of 5 additional images.");
+            }
+
             if (ModelState.IsValid)
             {
                 string wwwRootPath = _hostEnvironment.WebRootPath;
@@ -224,6 +231,22 @@ namespace GuitarVerse.Controllers
                 await _context.SaveChangesAsync();
 
                 // Тук по желание можеш да пратиш имейл "Your order has been shipped!"
+            }
+
+            return RedirectToAction("OrderDetails", new { id = orderId });
+        }
+
+        // 4. МАРКИРАНЕ КАТО ДОСТАВЕНА (DELIVERED)
+        [HttpPost]
+        public async Task<IActionResult> MarkDelivered(int orderId)
+        {
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+
+            var order = await _context.Orders.FindAsync(orderId);
+            if (order != null && order.Status == "Shipped")
+            {
+                order.Status = "Delivered"; // Краен статус
+                await _context.SaveChangesAsync();
             }
 
             return RedirectToAction("OrderDetails", new { id = orderId });

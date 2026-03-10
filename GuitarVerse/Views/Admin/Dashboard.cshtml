@@ -81,7 +81,7 @@
                         </td>
                         <td>@order.TotalAmount.ToString("N2") €</td>
                         <td>
-                            <a href="#" class="btn btn-sm btn-outline-dark">Manage</a>
+                            <a href=" @Url.Action("OrderDetails", new { id = order.OrderID })" class="btn btn-sm btn-outline-dark">Manage</a>
                         </td>
                     </tr>
                 }

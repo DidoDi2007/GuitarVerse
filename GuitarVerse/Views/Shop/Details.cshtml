@@ -28,7 +28,8 @@
                         <!-- Галерията (ако има други снимки) -->
                         @if (Model.Images != null)
                         {
-                            foreach (var img in Model.Images.Take(4))
+                            // Смени Take(4) на Take(5)
+                            foreach (var img in Model.Images.Take(5))
                             {
                                 <img src="@img.ImagePath" class="thumbnail" onclick="changeImage(this.src, this)">
                             }
