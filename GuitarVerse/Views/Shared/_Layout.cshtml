@@ -4,31 +4,38 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - GuitarVerse</title>
+    
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <!-- GuitarVerse Favicon (SVG Code) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
     <!-- GuitarVerse Favicon (Centered G) -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23000000%22 /><text x=%2250%22 y=%2254%22 font-size=%2270%22 font-weight=%22900%22 font-family=%22Arial, sans-serif%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%23ffffff%22>G</text></svg>">
-    <!-- FontAwesome за иконите -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/GuitarVerse.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
-
 </head>
 <body>
 
-    <!-- STICKY HEADER CONTAINER -->
+    <!-- ==========================================
+         HEADER / NAVIGATION (Sticky)
+    =========================================== -->
     <header class="fixed-top">
+        
+        <!-- 1. TOP BAR: Лого, Търсачка, Икони -->
+        <nav class="navbar navbar-expand-lg navbar-dark top-header py-2 px-3 px-md-5">
+            <div class="container-fluid p-0">
 
-        <!-- ROW 1: Logo, Search, User Icons -->
-        <div class="top-header">
-            <div class="container-fluid d-flex justify-content-between align-items-center">
+                <!-- Мобилен Hamburger Бутон -->
+                <button class="navbar-toggler border-0 shadow-none me-2" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavigation" aria-controls="mainNavigation" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-                <!-- 1. Logo -->
-                <a class="navbar-brand logo-text" asp-controller="Home" asp-action="Index">GUITARVERSE</a>
+                <!-- Лого -->
+                <a class="navbar-brand logo-text m-0" asp-controller="Home" asp-action="Index">GUITARVERSE</a>
 
-                <!-- 2. Search Bar (Center) -->
-                <div class="search-container d-none d-md-block">
+                <!-- Десктоп Търсачка (Скрита на телефон) -->
+                <div class="search-container d-none d-lg-block mx-auto">
                     <form asp-controller="Shop" asp-action="Index" method="get" class="d-flex">
                         <input class="form-control search-input" type="search" placeholder="Search for products..." aria-label="Search" name="query">
                         <button class="btn search-btn" type="submit">
@@ -37,108 +44,96 @@
                     </form>
                 </div>
 
-                <!-- 3. Right Icons (Login/Profile, Cart) -->
-                <div class="user-actions d-flex align-items-center">
-
-                    <a href="@Url.Action("Index", "Compare")" class="icon-link me-3 position-relative" title="Compare Gear">
+                <!-- Икони (Сравнение, Профил, Количка) -->
+                <div class="user-actions d-flex align-items-center ms-auto ms-lg-0">
+                    
+                    <!-- Compare -->
+                    <a href="@Url.Action("Index", "Compare")" class="icon-link me-2 me-md-3" title="Compare Gear">
                         <i class="fa-solid fa-scale-balanced"></i>
                     </a>
 
-                    <!-- Profile / Login Logic -->
-                    @{
-                        var userId = Context.Session.GetInt32("UserID");
-                        var isLogged = userId != null;
-                    }
-
+                    <!-- Profile -->
+                    @{ var isLogged = Context.Session.GetInt32("UserID") != null; }
                     @if (isLogged)
                     {
-                        <!-- ЛОГНАТ ПОТРЕБИТЕЛ -->
-                        <a href="@Url.Action("Index", "Profile")" class="icon-link me-3 position-relative" title="My Profile">
-                            <i class="fa-solid fa-user"></i> <!-- Плътна икона -->
-                            <!-- Зелена точка за статус -->
-                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-success border border-dark rounded-circle"
-                                  style="width: 10px; height: 10px;">
-                                <span class="visually-hidden">Logged In</span>
-                            </span>
+                        <a href="@Url.Action("Index", "Profile")" class="icon-link me-2 me-md-3 position-relative" title="My Profile">
+                            <i class="fa-solid fa-user"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-success border border-dark rounded-circle" style="width: 10px; height: 10px;"></span>
                         </a>
                     }
                     else
                     {
-                        <!-- ГОСТ (НЕЛОГНАТ) -->
-                        <a href="@Url.Action("Login", "Account")" class="icon-link me-3" title="Login / Register">
-                            <i class="fa-regular fa-user"></i> <!-- Куха икона -->
+                        <a href="@Url.Action("Login", "Account")" class="icon-link me-2 me-md-3" title="Login / Register">
+                            <i class="fa-regular fa-user"></i>
                         </a>
                     }
-                    
 
                     <!-- Cart -->
-                    <!-- Cart Icon -->
                     <a href="@Url.Action("Index", "Cart")" class="icon-link position-relative" title="Shopping Cart">
                         <i class="fa-solid fa-cart-shopping"></i>
-
-                        <!-- Червеното кръгче с бройката -->
-                        <span id="cartBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; display: none;">
-                            0
-                        </span>
+                        <span id="cartBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; display: none;">0</span>
                     </a>
 
-                   
                 </div>
             </div>
-        </div>
+        </nav>
 
-        <!-- ROW 2: Navigation Categories (Hover Dropdowns) -->
-        <nav class="bottom-nav">
-            <div class="container-fluid d-flex justify-content-center">
-                <ul class="nav-links list-unstyled d-flex m-0">
+        <!-- 2. BOTTOM BAR: Категории (Свива се в мобилното меню) -->
+        <div class="collapse d-lg-block bottom-nav bg-black" id="mainNavigation">
+            <div class="container-fluid">
+                
+                <!-- Мобилна Търсачка (Вижда се само на телефон) -->
+                <div class="d-block d-lg-none p-3 border-bottom border-secondary">
+                    <form asp-controller="Shop" asp-action="Index" method="get" class="d-flex">
+                        <input class="form-control bg-dark text-white border-secondary rounded-0" type="search" placeholder="Search..." name="query">
+                        <button class="btn btn-outline-light rounded-0" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    </form>
+                </div>
+
+                <ul class="nav-links list-unstyled d-flex flex-column flex-lg-row justify-content-center m-0 p-3 p-lg-0">
 
                     <!-- Guitars Dropdown -->
-                    <li class="nav-item dropdown-hover">
-                        <!-- Главният линк води към Електрически китари (ID=1) -->
-                        <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="1" class="nav-link">
-                            GUITARS <i class="fa-solid fa-chevron-down text-muted text-xs"></i>
+                    <li class="nav-item dropdown-hover mb-2 mb-lg-0">
+                        <!-- Използваме javascript:void(0); за да не презарежда и да не прескача най-горе -->
+                        <a href="javascript:void(0);" class="nav-link mobile-toggle-link d-flex justify-content-between align-items-center">
+                            GUITARS <i class="fa-solid fa-chevron-down text-muted text-xs ms-1"></i>
                         </a>
-                        <div class="dropdown-menu-custom">
-                            <div class="row">
-                                <div class="col-12">
-                                    <!-- Филтър за Електрически (ID=1) -->
-                                    <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="1">Electric</a>
+                        <div class="dropdown-menu-custom w-100">
+                            <!-- НОВО: Бутонът SHOP ALL най-отгоре -->
+                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="1" class="fw-bold text-white border-bottom border-secondary mb-2 pb-2">
+                                Shop All Guitars <i class="fa-solid fa-arrow-right ms-1"></i>
+                            </a>
 
-                                    <!-- Филтър за Акустични (ID=3) -->
-                                    <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="3">Acoustic</a>
-
-                                    <!-- Класически (ID=3 + Търсене за "Classical") -->
-                                    <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="3" asp-route-query="Classical">Classical</a>
-                                </div>
-                            </div>
+                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="1">Electric</a>
+                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="3">Acoustic</a>
+                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="3" asp-route-query="Classical">Classical</a>
                         </div>
                     </li>
 
-                    <!-- Bass Dropdown -->
-                    <li class="nav-item dropdown-hover">
-                        <!-- Главен линк към Басове (ID=2) -->
-                        <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="2" class="nav-link">
-                            BASS GUITARS <i class="fa-solid fa-chevron-down text-muted"></i>
+                    <!-- Basses Dropdown -->
+                    <li class="nav-item dropdown-hover mb-2 mb-lg-0">
+                        <a href="javascript:void(0);" class="nav-link mobile-toggle-link d-flex justify-content-between align-items-center">
+                            BASS GUITARS <i class="fa-solid fa-chevron-down text-muted ms-1"></i>
                         </a>
-                        <div class="dropdown-menu-custom">
-                            <!-- Филтър за 4 струни -->
+                        <div class="dropdown-menu-custom w-100">
+                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="2" class="fw-bold text-white border-bottom border-secondary mb-2 pb-2">
+                                Shop All Basses <i class="fa-solid fa-arrow-right ms-1"></i>
+                            </a>
                             <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="2" asp-route-strings="4">4-String</a>
-
-                            <!-- Филтър за 5 струни -->
                             <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="2" asp-route-strings="5">5-String</a>
-
-                            <!-- Търсене за Jazz Bass -->
                             <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="2" asp-route-strings="6">6-String</a>
                         </div>
                     </li>
 
-                    <!-- Accessories -->
-                    <li class="nav-item dropdown-hover">
-                        <!-- Главен линк към Аксесоари (ID=5) -->
-                        <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="5" class="nav-link">
-                            ACCESSORIES <i class="fa-solid fa-chevron-down text-muted"></i>
+                    <!-- Accessories Dropdown -->
+                    <li class="nav-item dropdown-hover mb-2 mb-lg-0">
+                        <a href="javascript:void(0);" class="nav-link mobile-toggle-link d-flex justify-content-between align-items-center">
+                            ACCESSORIES <i class="fa-solid fa-chevron-down text-muted ms-1"></i>
                         </a>
-                        <div class="dropdown-menu-custom">
+                        <div class="dropdown-menu-custom w-100">
+                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="5" class="fw-bold text-white border-bottom border-secondary mb-2 pb-2">
+                                Shop All Accessories <i class="fa-solid fa-arrow-right ms-1"></i>
+                            </a>
                             <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="5" asp-route-subType="Strings">Strings</a>
                             <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="5" asp-route-subType="Picks">Picks</a>
                             <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="5" asp-route-subType="Cables">Cables</a>
@@ -147,13 +142,15 @@
                         </div>
                     </li>
 
-                    <!-- Amps -->
-                    <li class="nav-item dropdown-hover">
-                        <!-- Главен линк към Усилватели (ID=4) -->
-                        <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="4" class="nav-link">
-                            AMPS <i class="fa-solid fa-chevron-down text-muted"></i>
+                    <!-- Amps Dropdown -->
+                    <li class="nav-item dropdown-hover mb-2 mb-lg-0">
+                        <a href="javascript:void(0);" class="nav-link mobile-toggle-link d-flex justify-content-between align-items-center">
+                            AMPS <i class="fa-solid fa-chevron-down text-muted ms-1"></i>
                         </a>
-                        <div class="dropdown-menu-custom">
+                        <div class="dropdown-menu-custom w-100">
+                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="4" class="fw-bold text-white border-bottom border-secondary mb-2 pb-2">
+                                Shop All Amps <i class="fa-solid fa-arrow-right ms-1"></i>
+                            </a>
                             <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="4" asp-route-subType="Combo Amp">Combo Amps</a>
                             <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="4" asp-route-subType="Amp Head">Heads</a>
                             <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="4" asp-route-subType="Cabinet">Cabinets</a>
@@ -161,58 +158,54 @@
                         </div>
                     </li>
 
-                    <!-- Artists -->
+                    <!-- Artists (Остава си директен линк) -->
                     <li class="nav-item">
-                        <a asp-controller="Artists" asp-action="Index" class="nav-link highlight-hover">ARTISTS</a>
+                        <a asp-controller="Artists" asp-action="Index" class="nav-link highlight-hover text-center text-lg-start">ARTISTS</a>
                     </li>
 
                 </ul>
             </div>
-        </nav>
+        </div>
     </header>
 
-    <!-- Main Content -->
+    <!-- ==========================================
+         MAIN CONTENT
+    =========================================== -->
     <div class="main-content">
-        <main role="main" class="pb-3">
+        <main role="main">
             @RenderBody()
         </main>
     </div>
 
+    <!-- ==========================================
+         FOOTER
+    =========================================== -->
     <footer class="footer-minimal">
-        <!-- container-fluid: Разпъва до край. px-5: Дава малко въздух отстрани -->
         <div class="container-fluid px-5">
             <div class="row align-items-center">
-
-                <!-- ЛЯВО: Лого и Copyright (Залепено вляво) -->
-                <div class="col-md-6 text-start">
+                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
                     <a asp-controller="Home" asp-action="Index" class="footer-brand-min">GUITARVERSE</a>
                     <div class="footer-copy-min mt-2">
                         &copy; @DateTime.Now.Year All rights reserved.
                     </div>
                 </div>
-
-                <!-- ДЯСНО: Линкове (Залепено вдясно) -->
-                <div class="col-md-6 text-end footer-links-min">
+                <div class="col-md-6 text-center text-md-end footer-links-min">
                     <a asp-controller="Support" asp-action="Contact">Contact Support</a>
                     <span class="footer-separator">•</span>
                     <a asp-controller="Home" asp-action="Privacy">Privacy Policy</a>
                 </div>
-
             </div>
         </div>
     </footer>
 
-
-
-    <!-- ==========================
-         COOKIE CONSENT BANNER
-    =========================== -->
+    <!-- ==========================================
+         OVERLAYS (Cookies & Compare)
+    =========================================== -->
+    
+    <!-- Cookie Banner -->
     <div id="cookieConsentBanner" class="cookie-banner" style="display: none;">
         <div class="container">
-            <!-- Използваме Grid (row) вместо чист Flex за по-добър контрол -->
             <div class="row align-items-center">
-
-                <!-- Текстът заема 9 от 12 части на широки екрани -->
                 <div class="col-md-9 text-start mb-3 mb-md-0">
                     <h5 class="fw-bold text-uppercase mb-2">
                         <i class="fa-solid fa-cookie-bite text-warning me-2"></i> We use cookies
@@ -222,79 +215,55 @@
                         By continuing, you agree to our <a asp-controller="Home" asp-action="Privacy" class="text-white fw-bold">Privacy Policy.</a>
                     </p>
                 </div>
-
-                <!-- Бутонът заема 3 от 12 части и го подравняваме вдясно -->
                 <div class="col-md-3 text-md-end text-center">
                     <button id="acceptCookiesBtn" class="btn btn-light fw-bold text-uppercase px-5 py-3 rounded-0 text-nowrap border-0 shadow">
                         I Agree
                     </button>
                 </div>
-
             </div>
         </div>
     </div>
-    <!-- JS ЗА ЛОГИКАТА -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // 1. Проверяваме дали вече има съгласие
-            if (!localStorage.getItem("guitarverse_cookies_accepted")) {
-                // Ако няма - показваме банера
-                document.getElementById("cookieConsentBanner").style.display = "block";
-            }
 
-            // 2. Слушаме за клик на бутона
-            document.getElementById("acceptCookiesBtn").addEventListener("click", function() {
-                // Записваме съгласието в браузъра на клиента
-                localStorage.setItem("guitarverse_cookies_accepted", "true");
-
-                // Скриваме банера
-                document.getElementById("cookieConsentBanner").style.display = "none";
-            });
-        });
-    </script>
-
-
-    <!-- FLOATING COMPARE POPUP (Thomann Style) -->
+    <!-- Compare Popup -->
     <div id="comparePopup" class="compare-popup" style="display: none;">
-        <!-- Хедър с хиксче за затваряне -->
         <div class="compare-popup-header">
             <span class="fw-bold text-uppercase" style="letter-spacing: 1px; font-size: 0.9rem;">
                 <i class="fa-solid fa-scale-balanced text-info me-2"></i> Compare
             </span>
             <button type="button" class="btn-close btn-close-white" onclick="closeComparePopup()" style="font-size: 0.7rem;"></button>
         </div>
-
-        <!-- Тяло на прозореца -->
         <div class="compare-popup-body d-flex align-items-center">
-
-            <!-- Тук ще се зареждат снимките от JavaScript -->
-            <div id="compareItemsContainer" class="compare-items-container d-flex gap-3">
-            </div>
-
-            <!-- Бутоните отдясно -->
+            <div id="compareItemsContainer" class="compare-items-container d-flex gap-3"></div>
             <div class="compare-actions ms-4 ps-4 border-start border-secondary d-flex flex-column justify-content-center align-items-center">
-
                 <a href="@Url.Action("Index", "Compare")" id="btnGoCompare" class="btn btn-light rounded-pill px-4 py-2 fw-bold mb-3 position-relative disabled transition-all">
                     Compare
-                    <!-- Червеното кръгче с бройката -->
-                    <span id="compareBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.7rem; border: 2px solid #1a1a1a;">
-                        0
-                    </span>
+                    <span id="compareBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.7rem; border: 2px solid #1a1a1a;">0</span>
                 </a>
-
                 <button onclick="clearCompare()" class="btn btn-link text-muted p-0 text-decoration-none small" style="font-size: 0.85rem;">
                     <i class="fa-solid fa-trash-can me-1"></i> Delete all
                 </button>
-
             </div>
         </div>
     </div>
 
-
+    <!-- SCRIPTS -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    <script>
+        // Код за бисквитките (остава тук, за да зарежда бързо)
+        document.addEventListener("DOMContentLoaded", function() {
+            if (!localStorage.getItem("guitarverse_cookies_accepted")) {
+                document.getElementById("cookieConsentBanner").style.display = "block";
+            }
+            document.getElementById("acceptCookiesBtn").addEventListener("click", function() {
+                localStorage.setItem("guitarverse_cookies_accepted", "true");
+                document.getElementById("cookieConsentBanner").style.display = "none";
+            });
+        });
+    </script>
+    
     @await RenderSectionAsync("Scripts", required: false)
-
 </body>
 </html>

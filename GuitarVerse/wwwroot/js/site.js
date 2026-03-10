@@ -474,3 +474,43 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+
+// ==========================
+// MOBILE MENU ACCORDION LOGIC (Simplified)
+// ==========================
+document.addEventListener("DOMContentLoaded", function () {
+    const toggleLinks = document.querySelectorAll(".mobile-toggle-link");
+
+    toggleLinks.forEach(link => {
+        link.addEventListener("click", function (e) {
+
+            // Задействаме клик логиката САМО ако сме на мобилен екран (< 992px)
+            // На компютър CSS Hover върши работата
+            if (window.innerWidth < 992) {
+                const parentLi = this.closest(".dropdown-hover");
+                const dropdown = parentLi.querySelector(".dropdown-menu-custom");
+                const icon = this.querySelector("i");
+
+                const isOpen = dropdown.style.display === "block";
+
+                // Затваряме всички други менюта и връщаме стрелките
+                document.querySelectorAll(".dropdown-menu-custom").forEach(menu => menu.style.display = "none");
+                document.querySelectorAll(".mobile-toggle-link i").forEach(i => {
+                    i.classList.remove("fa-chevron-up");
+                    i.classList.add("fa-chevron-down");
+                });
+
+                // Ако не е било отворено, го отваряме и въртим стрелката
+                if (!isOpen) {
+                    dropdown.style.display = "block";
+                    icon.classList.remove("fa-chevron-down");
+                    icon.classList.add("fa-chevron-up");
+                }
+            }
+        });
+    });
+});
+
+
+
