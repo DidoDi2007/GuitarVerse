@@ -170,7 +170,14 @@
                                                         </a>
                                                     </div>
                                                     <div class="product-price">@product.Price.ToString("N0") €</div>
-                                                    <div class="product-meta mt-1 text-success">In Stock</div>
+                                                    @if (product.Stock > 0)
+                                                    {
+                                                        <div class="product-meta mt-1 text-success">In Stock</div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="product-meta mt-1 text-danger">Out of Stock</div>
+                                                    }
                                                 </div>
                                             </div>
                                         </div>

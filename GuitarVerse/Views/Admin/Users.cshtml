@@ -1,0 +1,105 @@
+﻿@model List<GuitarVerse.Models.User>
+@{
+    ViewData["Title"] = "Manage Users";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    // Взимаме ID на текущия админ, за да скрием бутоните за него
+    var currentUserId = Context.Session.GetInt32("UserID");
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">User Management</h2>
+    <span class="badge bg-secondary fs-6">Total Users: @Model.Count</span>
+</div>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Verified</th>
+                    <th>Joined Date</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td>#@user.UserID</td>
+                        <td>
+                            <span class="fw-bold">@user.Email</span>
+                            @if (user.UserID == currentUserId)
+                            {
+                                <span class="badge bg-primary ms-2">YOU</span>
+                            }
+                        </td>
+                        <td>
+                            @if (user.Role == "admin")
+                            {
+                                <span class="badge bg-danger">ADMIN</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-info text-dark">Customer</span>
+                            }
+                        </td>
+                        <td>
+                            @if (user.IsEmailVerified)
+                            {
+                                <span class="text-success"><i class="fa-solid fa-check-circle"></i> Yes</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted"><i class="fa-solid fa-circle-xmark"></i> No</span>
+                            }
+                        </td>
+                        <td>@user.CreatedAt.ToShortDateString()</td>
+
+                        <td class="text-end">
+                            @if (user.UserID != currentUserId) // Крием бутоните за самия теб
+                            {
+                                <!-- Toggle Role Button -->
+                                <form asp-action="ToggleUserRole" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" value="@user.UserID" />
+                                    @if (user.Role == "customer")
+                                    {
+                                        <button type="submit" class="btn btn-sm btn-outline-success" title="Make Admin" onclick="return confirm('Make this user an Admin?');">
+                                            <i class="fa-solid fa-arrow-up"></i>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="submit" class="btn btn-sm btn-outline-warning" title="Demote to Customer" onclick="return confirm('Remove Admin rights?');">
+                                            <i class="fa-solid fa-arrow-down"></i>
+                                        </button>
+                                    }
+                                </form>
+
+                                <!-- Delete Button -->
+                                <form asp-action="DeleteUser" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" value="@user.UserID" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger ms-1" title="Delete User" onclick="return confirm('Are you sure? This will delete all their orders and data.');">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="text-muted small">Current Account</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

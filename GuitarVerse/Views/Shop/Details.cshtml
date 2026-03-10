@@ -29,7 +29,7 @@
                         @if (Model.Images != null)
                         {
                             // Смени Take(4) на Take(5)
-                            foreach (var img in Model.Images.Take(5))
+                            foreach (var img in Model.Images.Take(5 ))
                             {
                                 <img src="@img.ImagePath" class="thumbnail" onclick="changeImage(this.src, this)">
                             }
@@ -48,33 +48,53 @@
                 <div class="brand-label">@Model.Brand</div>
                 <h1 class="product-name-large">@Model.Name</h1>
 
+                <!-- ЦЕНА -->
                 <div class="product-price-large">
                     @Model.Price.ToString("N0") €
                 </div>
 
-                <p class="text-success fw-bold text-uppercase mb-4" style="letter-spacing: 1px;">
-                    <i class="fa-solid fa-check-circle me-2"></i> In Stock & Ready to Ship
-                </p>
+                <!-- СТАТУС НА НАЛИЧНОСТ -->
+                @if (Model.Stock > 0)
+                {
+                    <p class="text-success fw-bold text-uppercase mb-4" style="letter-spacing: 1px;">
+                        <i class="fa-solid fa-check-circle me-2"></i> In Stock & Ready to Ship
+                        <!-- Опционално: Може да покажем колко остават, ако са малко -->
+                        @if (Model.Stock < 5)
+                        {
+                            <span class="text-warning small ms-2">(Only @Model.Stock left!)</span>
+                        }
+                    </p>
 
-                <!-- Buttons add to card, back to shop -->
-                <div class="d-grid gap-2 mb-4">
+                    <!-- БУТОН (АКТИВЕН) -->
+                    <div class="d-grid gap-2 mb-4">
+                        <form method="post" asp-controller="Cart" asp-action="AddToCart">
+                            <input type="hidden" name="productId" value="@Model.ProductID" />
+                            <input type="hidden" name="quantity" value="1" />
 
-                    <!-- ФОРМА ЗА ДОБАВЯНЕ В КОЛИЧКАТА -->
-                    <form method="post" asp-controller="Cart" asp-action="AddToCart">
-                        <input type="hidden" name="productId" value="@Model.ProductID" />
+                            <button type="submit" class="btn btn-light btn-lg rounded-0 fw-bold py-3 text-uppercase fs-5 w-100">
+                                ADD TO CART
+                            </button>
+                        </form>
+                    </div>
+                }
+                else
+                {
+                    <!-- ИЗЧЕРПАНО (OUT OF STOCK) -->
+                    <p class="text-danger fw-bold text-uppercase mb-4" style="letter-spacing: 1px;">
+                        <i class="fa-solid fa-circle-xmark me-2"></i> Out of Stock
+                    </p>
 
-                        <!-- Може да добавиш input за Quantity тук, но засега е скрито 1 -->
-                        <input type="hidden" name="quantity" value="1" />
-
-                        <button type="submit" class="btn btn-light btn-lg rounded-0 fw-bold py-3 text-uppercase fs-5 w-100">
-                            ADD TO CART
+                    <!-- БУТОН (НЕАКТИВЕН) -->
+                    <div class="d-grid gap-2 mb-4">
+                        <button class="btn btn-secondary btn-lg rounded-0 fw-bold py-3 text-uppercase fs-5 w-100" disabled>
+                            SOLD OUT
                         </button>
-                    </form>
+                    </div>
+                }
 
-                    <a href="@Url.Action("Index", "Shop")" class="btn btn-outline-secondary rounded-0 text-uppercase">
-                        Back to Shop
-                    </a>
-                </div>
+                <a href="@Url.Action("Index", "Shop")" class="btn btn-outline-secondary rounded-0 text-uppercase w-100">
+                    Back to Shop
+                </a>
 
                 <ul class="list-unstyled feature-list">
                     <li><div class="feature-icon"><i class="fa-solid fa-guitar"></i></div> <strong>Body:</strong>&nbsp; @(Model.Category?.Name ?? "Electric")</li>
@@ -124,27 +144,43 @@
                     <!-- SPECS TAB -->
                     <div class="tab-pane fade" id="specs">
                         <div class="row mt-4">
-                            <div class="col-md-6">
-                                <h4 class="text-uppercase text-muted mb-3">General</h4>
+                            <!-- ЛЯВО: Основните параметри (от падащите менюта) -->
+                            <div class="col-md-5 mb-4">
+                                <h5 class="text-uppercase text-muted mb-3 border-bottom border-secondary pb-2">Key Features</h5>
                                 <table class="table table-borderless spec-table">
                                     <tbody>
                                         <tr><th>Brand</th><td>@Model.Brand</td></tr>
-                                        <tr><th>Model Name</th><td>@Model.Name</td></tr>
-                                        <tr><th>Series</th><td>Professional</td></tr> <!-- Примерно -->
+                                        <tr><th>Model</th><td>@Model.Name</td></tr>
+                                        <tr><th>Category</th><td>@Model.Category?.Name</td></tr>
                                         <tr><th>Orientation</th><td>@Model.Orientation</td></tr>
+                                        <tr><th>Strings</th><td>@Model.NumberOfStrings</td></tr>
+                                        <tr><th>Pickups</th><td>@Model.PickupType</td></tr>
+                                        <tr><th>Bridge</th><td>@Model.BridgeType</td></tr>
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="col-md-6">
-                                <h4 class="text-uppercase text-muted mb-3">Hardware & Electronics</h4>
-                                <table class="table table-borderless spec-table">
-                                    <tbody>
-                                        <tr><th>Number of Strings</th><td>@Model.NumberOfStrings</td></tr>
-                                        <tr><th>Bridge Type</th><td>@Model.BridgeType</td></tr>
-                                        <tr><th>Pickup Configuration</th><td>@Model.PickupType</td></tr>
-                                        <tr><th>Case Included</th><td>No</td></tr>
-                                    </tbody>
-                                </table>
+
+                            <!-- ДЯСНО: Детайлният списък (от новото поле) -->
+                            <div class="col-md-7">
+                                <h5 class="text-uppercase text-muted mb-3 border-bottom border-secondary pb-2">Technical Specifications</h5>
+
+                                @if (!string.IsNullOrEmpty(Model.SpecsText))
+                                {
+                                    <ul class="list-unstyled">
+                                        <!-- Тук цепим текста на редове и правим списък -->
+                                        @foreach (var line in Model.SpecsText.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+                                        {
+                                            <li class="mb-2 pb-2 border-bottom border-secondary" style="border-color: #333 !important;">
+                                                <!-- Малка бяла точка, центрирана вертикално -->
+                                                <i class="fa-solid fa-circle text-white me-2" style="font-size: 5px; vertical-align: middle;"></i> @line
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                                else
+                                {
+                                    <p class="text-muted">No detailed specifications available for this product.</p>
+                                }
                             </div>
                         </div>
                     </div>

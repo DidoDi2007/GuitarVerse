@@ -1,29 +1,34 @@
 ﻿@model GuitarVerse.Models.ProductFormViewModel
 @{
-    ViewData["Title"] = "Add Product";
+    ViewData["Title"] = "Edit Product";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
 <div class="container" style="max-width: 900px;">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-dark">Add New Product</h2>
+        <h2 class="fw-bold text-dark">Edit Product</h2>
+        <a href="@Url.Action("Products")" class="btn btn-outline-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Back to List
+        </a>
     </div>
 
     <form method="post" enctype="multipart/form-data" class="card border-0 shadow-sm">
         <div class="card-body p-4">
 
-            <!-- Основна информация -->
+            <!-- СКРИТО ID (Много важно!) -->
+            <input type="hidden" asp-for="Product.ProductID" />
+
+            <!-- BASIC INFO -->
             <h5 class="text-uppercase text-muted mb-3 border-bottom pb-2">Basic Info</h5>
             <div class="row g-3 mb-4">
                 <div class="col-md-6">
                     <label class="form-label fw-bold">Brand</label>
-                    <input asp-for="Product.Brand" class="form-control" placeholder="e.g. Fender" required />
+                    <input asp-for="Product.Brand" class="form-control" required />
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-bold">Model Name</label>
-                    <input asp-for="Product.Name" class="form-control" placeholder="e.g. Player Stratocaster" required />
+                    <input asp-for="Product.Name" class="form-control" required />
                 </div>
-
                 <div class="col-md-4">
                     <label class="form-label fw-bold">Category</label>
                     <select asp-for="Product.CategoryID" class="form-select">
@@ -35,23 +40,20 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label fw-bold">Price (€)</label>
-                    <div class="input-group">
-                        <span class="input-group-text">€</span>
-                        <input asp-for="Product.Price" type="number" step="0.01" class="form-control" required />
-                    </div>
+                    <input asp-for="Product.Price" type="number" step="0.01" class="form-control" required />
                 </div>
                 <div class="col-md-4">
                     <label class="form-label fw-bold">Stock</label>
-                    <input asp-for="Product.Stock" type="number" class="form-control" value="1" required />
+                    <input asp-for="Product.Stock" type="number" class="form-control" required />
                 </div>
             </div>
 
-            <!-- Спецификации -->
+            <!-- SPECS -->
             <h5 class="text-uppercase text-muted mb-3 border-bottom pb-2 mt-4">Specifications</h5>
             <div class="row g-3 mb-4">
                 <div class="col-md-3">
                     <label class="form-label text-muted small">Strings</label>
-                    <input asp-for="Product.NumberOfStrings" type="number" class="form-control" value="6" />
+                    <input asp-for="Product.NumberOfStrings" type="number" class="form-control" />
                 </div>
                 <div class="col-md-3">
                     <label class="form-label text-muted small">Orientation</label>
@@ -77,30 +79,55 @@
                 </div>
             </div>
 
-            <!-- Снимки -->
+            <!-- IMAGES MANAGEMENT -->
             <h5 class="text-uppercase text-muted mb-3 border-bottom pb-2 mt-4">Images</h5>
-            <div class="row g-3 mb-4">
-                <div class="col-md-6">
-                    <label class="form-label fw-bold">Main Image (Cover)</label>
-                    <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" required />
-                    <div class="form-text">This will be shown in the catalog.</div>
+
+            <!-- 1. Main Image -->
+            <div class="row mb-4">
+                <div class="col-md-2">
+                    <label class="form-label small text-muted">Current Cover:</label><br>
+                    <img src="@Model.Product.ImagePath" class="img-thumbnail" style="width: 100px;">
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-bold">Gallery Images (Max 5)</label> <!-- Промених текста -->
-                    <input asp-for="GalleryFiles" type="file" class="form-control" accept="image/*" multiple />
-
-                    <!-- ТОВА ЩЕ ПОКАЖЕ ГРЕШКАТА В ЧЕРВЕНО -->
-                    <span asp-validation-for="GalleryFiles" class="text-danger small"></span>
-
-                    <div class="form-text">Select up to 5 images for the details page (Ctrl + Click).</div>
+                <div class="col-md-10">
+                    <label class="form-label fw-bold">Change Main Image</label>
+                    <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" />
+                    <div class="form-text">Leave empty to keep the current image.</div>
                 </div>
             </div>
 
-            <!-- Описание -->
+            <!-- 2. Gallery -->
+            <label class="form-label fw-bold">Gallery Images</label>
+
+            <!-- Списък със съществуващи -->
+            @if (Model.Product.Images != null && Model.Product.Images.Any())
+            {
+                <div class="d-flex gap-3 mb-3 flex-wrap">
+                    @foreach (var img in Model.Product.Images)
+                    {
+                        <div class="position-relative text-center border p-1 rounded bg-light">
+                            <img src="@img.ImagePath" style="height: 80px; object-fit: contain;">
+                            <!-- Бутон за триене на конкретна снимка -->
+                            <button type="submit" asp-action="DeleteGalleryImage" asp-route-imageId="@img.ImageID"
+                                    class="btn btn-danger btn-sm position-absolute top-0 start-100 translate-middle rounded-circle"
+                                    style="width: 25px; height: 25px; padding: 0; font-size: 12px;"
+                                    title="Delete Image" onclick="return confirm('Delete this image?');">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                    }
+                </div>
+            }
+
+            <input asp-for="GalleryFiles" type="file" class="form-control" accept="image/*" multiple />
+            <span asp-validation-for="GalleryFiles" class="text-danger small"></span>
+            <div class="form-text">Upload MORE images to add to the gallery.</div>
+
+
+            <!-- DESCRIPTION -->
             <h5 class="text-uppercase text-muted mb-3 border-bottom pb-2 mt-4">Description</h5>
             <div class="mb-3">
                 <label class="form-label fw-bold">Short Description</label>
-                <input asp-for="Product.Description" class="form-control" placeholder="Brief summary..." />
+                <input asp-for="Product.Description" class="form-control" />
             </div>
             <div class="mb-3">
                 <label class="form-label fw-bold">Detailed Specs (One per line)</label>
@@ -109,11 +136,11 @@
             </div>
             <div class="mb-3">
                 <label class="form-label fw-bold">Full Overview</label>
-                <textarea asp-for="Product.Overview" class="form-control font-monospace" rows="6" placeholder="..."></textarea>
+                <textarea asp-for="Product.Overview" class="form-control font-monospace" rows="6">....</textarea>
             </div>
 
             <div class="text-end pt-3">
-                <button type="submit" class="btn btn-dark px-5 py-2 fw-bold text-uppercase">Save Product</button>
+                <button type="submit" class="btn btn-primary px-5 py-2 fw-bold text-uppercase">Save Changes</button>
             </div>
         </div>
     </form>

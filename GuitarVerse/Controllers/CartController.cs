@@ -72,8 +72,18 @@ namespace GuitarVerse.Controllers
         [HttpPost]
         public async Task<IActionResult> AddToCart(int productId, int quantity = 1)
         {
+            // 1. ПРОВЕРКА ЗА НАЛИЧНОСТ
+            var product = await _context.Products.FindAsync(productId);
+
+            if (product == null || product.Stock < quantity)
+            {
+                // Ако продукта го няма или наличността е по-малка от исканото -> Връщаме назад
+                // (Тук може да добавим и съобщение за грешка с TempData, но за сега просто го спираме)
+                return RedirectToAction("Index", "Shop");
+            }
+
             var userId = HttpContext.Session.GetInt32("UserID");
-            string guestId = GetGuestId(); // Винаги взимаме GuestID, дори да не е логнат
+            string guestId = GetGuestId();
 
             CartItem existingItem = null;
 

@@ -49,6 +49,12 @@
                             }
                         </td>
                         <td class="text-end">
+                            <!-- EDIT BUTTON -->
+                            <a href="@Url.Action("EditProduct", new { id = p.ProductID })" class="btn btn-sm btn-outline-primary me-1">
+                                <i class="fa-solid fa-pen"></i>
+                            </a>
+
+                            <!-- DELETE BUTTON (вече го имаш) -->
                             <form asp-action="DeleteProduct" method="post" style="display:inline;" onsubmit="return confirm('Delete this product?');">
                                 <input type="hidden" name="id" value="@p.ProductID" />
                                 <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></button>

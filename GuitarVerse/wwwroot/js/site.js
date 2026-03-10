@@ -105,6 +105,15 @@ document.addEventListener("DOMContentLoaded", function () {
             minimumFractionDigits: 0
         }).format(product.price);
 
+        // --- НОВА ЛОГИКА ЗА СТАТУСА ---
+        let stockHtml = '';
+        if (product.stock > 0) {
+            stockHtml = '<div class="product-meta mt-1 text-success">In Stock</div>';
+        } else {
+            stockHtml = '<div class="product-meta mt-1 text-danger">Out of Stock</div>';
+        }
+        // ------------------------------
+
         // ВАЖНО: product.productID (или productId) трябва да идва правилно от контролера
         return `
             <div class="col-6 col-md-4 col-lg-3">
@@ -122,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             </a>
                         </div>
                         <div class="product-price">${formattedPrice} €</div>
-                        <div class="product-meta mt-1 text-success">In Stock</div>
+                         ${stockHtml}
                     </div>
                 </div>
             </div>

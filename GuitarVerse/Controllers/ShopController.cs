@@ -84,7 +84,8 @@ namespace GuitarVerse.Controllers
                     p.ImagePath,
                     p.Brand,
                     p.Name,
-                    p.Price
+                    p.Price,
+                    p.Stock
                 });
 
                 return Json(jsonResult);

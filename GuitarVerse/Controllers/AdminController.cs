@@ -2,6 +2,7 @@
 using GuitarVerse.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Ganss.Xss; // <--- ТОВА Е БИБЛИОТЕКАТА
 
 namespace GuitarVerse.Controllers
 {
@@ -121,6 +122,16 @@ namespace GuitarVerse.Controllers
                 {
                     model.Product.ImagePath = "https://placehold.co/400";
                 }
+
+                // --- ЗАЩИТА: ПОЧИСТВАНЕ НА HTML (XSS) ---
+                if (!string.IsNullOrEmpty(model.Product.Overview))
+                {
+                    var sanitizer = new HtmlSanitizer();
+                    // Това маха <script> и оставя само безопасни тагове
+                    model.Product.Overview = sanitizer.Sanitize(model.Product.Overview);
+                }
+                // ----------------------------------------
+
 
                 // Първо записваме продукта, за да получим ID
                 _context.Products.Add(model.Product);
@@ -251,6 +262,239 @@ namespace GuitarVerse.Controllers
 
             return RedirectToAction("OrderDetails", new { id = orderId });
         }
+
+        // ==========================
+        // EDIT PRODUCT LOGIC
+        // ==========================
+
+        // 1. ОТВАРЯНЕ НА ФОРМАТА ЗА РЕДАКЦИЯ
+        [HttpGet]
+        public async Task<IActionResult> EditProduct(int id)
+        {
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+
+            var product = await _context.Products
+                .Include(p => p.Images) // Зареждаме и галерията
+                .FirstOrDefaultAsync(p => p.ProductID == id);
+
+            if (product == null) return NotFound();
+
+            var model = new ProductFormViewModel
+            {
+                Product = product,
+                Categories = _context.Categories.ToList()
+            };
+
+            return View(model);
+        }
+
+        // 2. ЗАПИСВАНЕ НА ПРОМЕНИТЕ
+        [HttpPost]
+        public async Task<IActionResult> EditProduct(int id, ProductFormViewModel model)
+        {
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+
+            // Игнорираме валидацията за снимки (защото може да не искаш да ги сменяш)
+            ModelState.Remove("Product.ImagePath");
+            ModelState.Remove("Product.Category");
+            ModelState.Remove("Product.Images");
+            ModelState.Remove("Product.Reviews");
+            ModelState.Remove("Categories");
+            ModelState.Remove("ImageFile"); // При редакция не е задължително да качваш нова
+
+            // --- НОВА ПРОВЕРКА ЗА ЛИМИТ (EDIT) ---
+            if (model.GalleryFiles != null && model.GalleryFiles.Count > 0)
+            {
+                // 1. Преброяваме колко снимки има ТОЗИ продукт в момента в базата
+                int existingCount = await _context.ProductImages.CountAsync(i => i.ProductID == id);
+
+                // 2. Преброяваме колко нови се опитва да качи админът
+                int newCount = model.GalleryFiles.Count;
+
+                // 3. Ако сумата е над 5 -> ГРЕШКА
+                if (existingCount + newCount > 5)
+                {
+                    ModelState.AddModelError("GalleryFiles", $"Limit exceeded! You already have {existingCount} images.");
+                }
+            }
+            // -------------------------------------
+
+            if (ModelState.IsValid)
+            {
+                // Намираме съществуващия продукт в базата
+                var productToUpdate = await _context.Products.FindAsync(id);
+                if (productToUpdate == null) return NotFound();
+
+                // Обновяваме текстовите полета
+                productToUpdate.Brand = model.Product.Brand;
+                productToUpdate.Name = model.Product.Name;
+                productToUpdate.CategoryID = model.Product.CategoryID;
+                productToUpdate.Price = model.Product.Price;
+                productToUpdate.Stock = model.Product.Stock;
+                productToUpdate.NumberOfStrings = model.Product.NumberOfStrings;
+                productToUpdate.Orientation = model.Product.Orientation;
+                productToUpdate.PickupType = model.Product.PickupType;
+                productToUpdate.BridgeType = model.Product.BridgeType;
+                productToUpdate.Description = model.Product.Description;
+                productToUpdate.Overview = model.Product.Overview;
+                productToUpdate.SpecsText = model.Product.SpecsText;
+
+                string wwwRootPath = _hostEnvironment.WebRootPath;
+
+                // --- ЛОГИКА ЗА ГЛАВНАТА СНИМКА ---
+                // Само ако има качен нов файл, сменяме старата снимка
+                if (model.ImageFile != null)
+                {
+                    // (Опционално: Тук можеш да изтриеш стария файл от диска, за да не се трупат)
+
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.ImageFile.FileName);
+                    string path = Path.Combine(wwwRootPath + "/images/products/", fileName);
+
+                    using (var fileStream = new FileStream(path, FileMode.Create))
+                    {
+                        await model.ImageFile.CopyToAsync(fileStream);
+                    }
+                    productToUpdate.ImagePath = "/images/products/" + fileName;
+                }
+
+                // --- ЛОГИКА ЗА ГАЛЕРИЯТА (ДОБАВЯНЕ НА ОЩЕ) ---
+                if (model.GalleryFiles != null && model.GalleryFiles.Count > 0)
+                {
+                    foreach (var file in model.GalleryFiles)
+                    {
+                        string galleryName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                        string galleryPath = Path.Combine(wwwRootPath + "/images/products/", galleryName);
+
+                        using (var stream = new FileStream(galleryPath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                        }
+
+                        var newImage = new ProductImage
+                        {
+                            ProductID = id,
+                            ImagePath = "/images/products/" + galleryName
+                        };
+                        _context.ProductImages.Add(newImage);
+                    }
+                }
+
+                // --- ЗАЩИТА ---
+                if (!string.IsNullOrEmpty(model.Product.Overview))
+                {
+                    var sanitizer = new HtmlSanitizer();
+                    productToUpdate.Overview = sanitizer.Sanitize(model.Product.Overview);
+                }
+                else
+                {
+                    productToUpdate.Overview = model.Product.Overview; // Ако е празно
+                }
+                // --------------
+
+
+                _context.Products.Update(productToUpdate);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Products");
+            }
+
+            var product = await _context.Products
+            .Include(p => p.Images)
+            .FirstOrDefaultAsync(p => p.ProductID == id);
+
+            model.Product = product; // Връщаме старите данни в модела
+            model.Categories = _context.Categories.ToList();
+            return View(model);
+        }
+
+        // 3. ИЗТРИВАНЕ НА ЕДНА СНИМКА ОТ ГАЛЕРИЯТА (AJAX или Form)
+        [HttpPost]
+        public async Task<IActionResult> DeleteGalleryImage(int imageId)
+        {
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+
+            var img = await _context.ProductImages.FindAsync(imageId);
+            if (img != null)
+            {
+                // Запазваме ID на продукта, за да се върнем на същата страница
+                int productId = img.ProductID;
+
+                _context.ProductImages.Remove(img);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("EditProduct", new { id = productId });
+            }
+            return RedirectToAction("Products");
+        }
+
+        // ==========================
+        // USER MANAGEMENT
+        // ==========================
+
+        // 1. СПИСЪК С ПОТРЕБИТЕЛИ
+        public async Task<IActionResult> Users()
+        {
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+
+            var users = await _context.Users
+                .OrderByDescending(u => u.CreatedAt) // Най-новите най-горе
+                .ToListAsync();
+
+            return View(users);
+        }
+
+        // 2. ПРОМЯНА НА РОЛЯ (Admin <-> Customer)
+        [HttpPost]
+        public async Task<IActionResult> ToggleUserRole(int id)
+        {
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+
+            // ЗАЩИТА: Не позволяваме да променяш собствената си роля
+            var currentUserId = HttpContext.Session.GetInt32("UserID");
+            if (id == currentUserId)
+            {
+                TempData["Error"] = "You cannot change your own role!";
+                return RedirectToAction("Users");
+            }
+
+            var user = await _context.Users.FindAsync(id);
+            if (user != null)
+            {
+                // Ако е админ става клиент, ако е клиент става админ
+                if (user.Role == "admin") user.Role = "customer";
+                else user.Role = "admin";
+
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("Users");
+        }
+
+        // 3. ИЗТРИВАНЕ НА ПОТРЕБИТЕЛ
+        [HttpPost]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+
+            // ЗАЩИТА: Не позволяваме да изтриеш сам себе си
+            var currentUserId = HttpContext.Session.GetInt32("UserID");
+            if (id == currentUserId)
+            {
+                TempData["Error"] = "You cannot delete your own account!";
+                return RedirectToAction("Users");
+            }
+
+            var user = await _context.Users.FindAsync(id);
+            if (user != null)
+            {
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("Users");
+        }
+
+
 
     }
 }

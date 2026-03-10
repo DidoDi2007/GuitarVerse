@@ -21,6 +21,7 @@
         public int NumberOfStrings { get; set; } = 6;
         public string BridgeType { get; set; } = "Fixed";
         public string PickupType { get; set; } = "Passive";
+        public string? SpecsText { get; set; } // <--- НОВО
         public ICollection<Review> Reviews { get; set; }
         public string? Overview { get; set; } // HTML текст за описанието
         public ICollection<ProductImage> Images { get; set; } // Галерията

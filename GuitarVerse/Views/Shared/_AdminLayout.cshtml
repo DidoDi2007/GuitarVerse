@@ -42,6 +42,16 @@
                     <i class="fa-solid fa-envelope"></i> Messages
                 </a>
 
+                <a href="@Url.Action("Users", "Admin")" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Users" ? "active" : "")">
+                    <i class="fa-solid fa-users"></i> Users
+                </a>
+
+
+
+
+
+
+
                 <div class="mt-5 border-top border-secondary pt-3 mx-3">
                     <a href="@Url.Action("Index", "Home")" class="nav-link text-muted">
                         <i class="fa-solid fa-arrow-left"></i> Back to Shop
