@@ -87,7 +87,15 @@ namespace GuitarVerse.Controllers
         public IActionResult ClearAll()
         {
             SaveCompareList(new List<int>()); // Записваме празен списък
-            return Json(new { success = true });
+
+            // Ако е AJAX (от малкото прозорче долу вдясно)
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return Json(new { success = true });
+            }
+
+            // Ако е нормално кликване (от големия бутон Clear All в страницата)
+            return RedirectToAction("Index");
         }
 
         // 6. ПРЕМАХВАНЕ НА ЕДИН ПРОДУКТ (AJAX)

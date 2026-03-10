@@ -364,6 +364,16 @@ function closeComparePopup() {
 
 // 5. Обновяване на интерфейса
 function updateCompareBanner() {
+
+    // --- НОВО: ПРОВЕРКА ЗА ТЕКУЩАТА СТРАНИЦА ---
+    // Ако сме в страницата /Compare, изобщо не изпълняваме функцията и скриваме прозореца.
+    if (window.location.pathname.toLowerCase().includes('/compare')) {
+        const popup = document.getElementById('comparePopup');
+        if (popup) popup.style.display = 'none';
+        return; // Спираме изпълнението
+    }
+    // -------------------------------------------
+
     fetch('/Compare/GetCompareData')
         .then(response => response.json())
         .then(products => {
@@ -407,3 +417,34 @@ function updateCompareBanner() {
 }
 
 document.addEventListener("DOMContentLoaded", updateCompareBanner);
+
+
+// ==========================
+// СРАВНЕНИЕ НА ПРОДУКТИ: SHOW MORE / SHOW LESS
+// ==========================
+document.addEventListener('DOMContentLoaded', function () {
+    const btn = document.getElementById('toggleSpecsBtn');
+
+    // Проверяваме дали бутонът съществува на текущата страница
+    if (btn) {
+        btn.addEventListener('click', function () {
+            // Намираме всички скрити редове
+            const hiddenRows = document.querySelectorAll('.extra-spec-row');
+            let isShowing = false;
+
+            hiddenRows.forEach(row => {
+                row.classList.toggle('show-specs');
+                if (row.classList.contains('show-specs')) {
+                    isShowing = true;
+                }
+            });
+
+            // Сменяме текста и иконата
+            if (isShowing) {
+                btn.innerHTML = 'Hide Detailed Specs <i class="fa-solid fa-chevron-up ms-2"></i>';
+            } else {
+                btn.innerHTML = 'Show Detailed Specs <i class="fa-solid fa-chevron-down ms-2"></i>';
+            }
+        });
+    }
+});

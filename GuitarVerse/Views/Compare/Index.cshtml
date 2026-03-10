@@ -13,9 +13,12 @@
             </div>
             @if (Model.Any())
             {
-                <a href="@Url.Action("ClearCompare", "Shop")" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
-                    <i class="fa-solid fa-trash-can me-2"></i>Clear All
-                </a>
+                <!-- СМЕНЕНО ОТ <a> НА <form> ЗА СИГУРНОСТ -->
+                <form method="post" asp-controller="Compare" asp-action="ClearAll" onsubmit="return confirm('Are you sure you want to clear the comparison list?');">
+                    <button type="submit" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                        <i class="fa-solid fa-trash-can me-2"></i>Clear All
+                    </button>
+                </form>
             }
         </div>
 
@@ -29,7 +32,7 @@
                 <h2 class="text-white mt-2">Your comparison list is empty</h2>
                 <p class="text-muted mb-4">Add some axes to the list to see how they stack up.</p>
                 <a href="@Url.Action("Index", "Shop")" class="btn btn-danger btn-lg rounded-pill px-5 fw-bold shadow-lg">
-                    Browse Guitars
+                    Browse Products
                 </a>
             </div>
         }
@@ -138,29 +141,39 @@
                             }
                         </tr>
 
-                        <tr class="section-row">
+                        <!-- БУТОН ЗА ПОКАЗВАНЕ/СКРИВАНЕ -->
+                        <tr>
+                            <td colspan="@(Model.Count + 1)" class="text-center py-4" style="background-color: #000; border-bottom: none;">
+                                <button type="button" id="toggleSpecsBtn" class="btn btn-outline-danger rounded-pill px-4 fw-bold text-uppercase">
+                                    Show Detailed Specs <i class="fa-solid fa-chevron-down ms-2"></i>
+                                </button>
+                            </td>
+                        </tr>
+
+                        <!-- СЕКЦИЯТА С ДЕТАЙЛИТЕ (Центрирана, без червена лента) -->
+                        <tr class="section-row-centered extra-spec-row">
                             <td colspan="@(Model.Count + 1)">Detailed Specifications</td>
                         </tr>
-                        <tr>
-                            <td class="label-cell align-top">Full Specs</td>
+
+                        <!-- Самите спецификации -->
+                        <tr class="extra-spec-row">
+
+                            <!-- ЛЯВА КОЛОНА: Празна, но пази бордера -->
+                            <td class="label-cell align-top" style="background: transparent;">
+                                <!-- Оставяме я празна -->
+                            </td>
+
+                            <!-- КОЛОНИ ЗА ПРОДУКТИТЕ -->
                             @foreach (var p in Model)
                             {
                                 <td class="specs-cell align-top">
                                     @if (!string.IsNullOrEmpty(p.SpecsText))
                                     {
-                                        <ul class="specs-list text-start ps-0">
-                                            <!-- ps-0 маха излишното отстояние отляво -->
+                                        <ul class="specs-list text-start ps-0 m-0">
                                             @foreach (var line in p.SpecsText.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
                                             {
-                                                <!-- d-flex: Подрежда точката и текста на един ред -->
-                                                <!-- align-items-start: Подравнява ги горе (важно, ако текстът е на 2 реда) -->
                                                 <li class="d-flex align-items-start mb-2">
-
-                                                    <!-- mt-2: Сваля точката малко надолу, за да е визуално центрирана спрямо първия ред текст -->
-                                                    <!-- flex-shrink-0: Гарантира, че точката няма да се смачка -->
                                                     <i class="fa-solid fa-circle text-danger me-2 mt-2" style="font-size: 5px; flex-shrink: 0;"></i>
-
-                                                    <!-- .Trim() маха празните разстояния преди текста -->
                                                     <span>@line.Trim()</span>
                                                 </li>
                                             }
@@ -168,7 +181,7 @@
                                     }
                                     else
                                     {
-                                        <span class="text-muted">—</span>
+                                        <span class="text-muted text-center d-block mt-3">—</span>
                                     }
                                 </td>
                             }

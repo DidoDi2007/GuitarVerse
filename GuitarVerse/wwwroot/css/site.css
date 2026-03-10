@@ -1902,3 +1902,49 @@ textarea.form-control {
         color: #c0392b;
         cursor: pointer;
     }
+
+
+/* Скрити редове по подразбиране */
+.extra-spec-row {
+    display: none;
+}
+
+    /* Класът, който JS ще добавя, за да ги покаже */
+    .extra-spec-row.show-specs {
+        display: table-row;
+    }
+
+/* Стил за бутона Show More */
+.btn-toggle-specs {
+    background: transparent;
+    color: #c0392b; /* Червен акцент */
+    border: 1px solid #c0392b;
+    border-radius: 20px;
+    padding: 8px 25px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+    .btn-toggle-specs:hover {
+        background: #c0392b;
+        color: #fff;
+    }
+
+/* 1. Клас за центрирани заглавия (Махаме червената лента отляво) */
+.section-row-centered td {
+    background-color: #111 !important;
+    color: #fff;
+    text-align: center !important; /* Центрира текста */
+    padding: 15px 0 !important;
+    font-size: 1.1rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    border-left: none !important; /* МАХАМЕ червената лента */
+    border-bottom: 1px solid #222 !important;
+}
+
+/* 2. Гарантираме дясна рамка за първата колона (Етикетите) */
+.label-cell {
+    border-right: 1px solid #333 !important; /* ТОВА СЪЗДАВА ЛИПСВАЩАТА ЧЕРТА */
+}
