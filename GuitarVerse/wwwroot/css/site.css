@@ -1,24 +1,40 @@
 ﻿/* =========================================
    1. GLOBAL STYLES (Основни настройки)
    ========================================= */
-html {
-    position: relative;
-    min-height: 100%;
-    font-size: 14px;
+/* =========================================
+   STICKY FOOTER FIX (Гарантирано)
+   ========================================= */
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Заема целия екран */
+    background-color: #0c0c0c; /* Твоят основен цвят */
+}
+
+/* Това избутва футъра надолу */
+.main-content {
+    flex: 1; /* Расте, за да запълни дупката */
+    width: 100%;
+    /* Тъй като имаме фиксиран хедър, трябва padding тук или на body */
+    padding-top: 140px; /* Нагласи го според височината на менюто ти */
+}
+
+/* Футърът не трябва да се свива */
+footer {
+    flex-shrink: 0;
 }
 
 @media (min-width: 768px) {
     html {
         font-size: 16px;
     }
-}
-
-body {
-    background-color: #121212; /* Тъмен фон за целия сайт */
-    color: #e0e0e0; /* Светъл текст */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    padding-top: 130px; /* Място за Sticky Header */
-    margin-bottom: 60px; /* Място за Footer */
 }
 
 a {
@@ -125,6 +141,7 @@ header.fixed-top {
     margin-left: 5px;
     vertical-align: middle;
 }
+
 
 /* Падащи менюта (Dropdowns) */
 .dropdown-menu-custom {
@@ -314,23 +331,6 @@ header.fixed-top {
 }
 
 /* =========================================
-   4. FOOTER
-   ========================================= */
-footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 60px;
-    line-height: 60px;
-    background-color: #000;
-    border-top: 1px solid #222;
-}
-
-    footer a {
-        color: #bbb;
-    }
-
-/* =========================================
    5. HOME PAGE STYLES
    ========================================= */
 /* HERO SECTION WRAPPER */
@@ -395,7 +395,7 @@ footer {
 .hero-content p {
     text-shadow: 0 2px 4px rgba(0, 0, 0, 1); /* Плътна сянка за малкия текст */
     font-weight: 600; /* Малко по-дебел шрифт за по-добър контраст */
-    background-color: rgba(0, 0, 0, 0.3); /* Лек черен фон само зад текста (опционално) */
+    /*background-color: rgba(0, 0, 0, 0.3);*/ /* Лек черен фон само зад текста (опционално) */
     padding: 5px 15px; /* Въздух около текста, ако ползваш background-color */
     border-radius: 4px;
     display: inline-block; /* За да е само колкото текста */
@@ -1202,7 +1202,7 @@ textarea.form-control {
     border: 1px solid #333;
 }
 
-/* Status Steps Styling */
+/* STATUS STEPS (Изчистен дизайн без кръгове) */
 .steps {
     display: flex;
     justify-content: space-between;
@@ -1210,53 +1210,53 @@ textarea.form-control {
     position: relative;
 }
 
-.steps::before {
-    content: "";
-    position: absolute;
-    top: 15px;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: #333;
-    z-index: 0;
-}
+    /* Линията отзад */
+    .steps::before {
+        content: "";
+        position: absolute;
+        top: 12px; /* Центрирано спрямо иконата */
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: #333;
+        z-index: 0;
+    }
 
+/* Промени този клас: */
 .step {
     position: relative;
     z-index: 1;
     text-align: center;
-    background: #1a1a1a;
-    padding: 0 10px;
+    /* Смени background на transparent или го изтрий */
+    background: transparent;
+    padding: 0 15px;
 }
 
+/* И този клас: */
 .step-icon {
-    width: 30px;
-    height: 30px;
-    background: #333;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 5px;
-    color: #888;
-    font-size: 0.8rem;
+    font-size: 1.5rem;
+    color: #444;
+    margin-bottom: 5px;
+    /* ВАЖНО: Правим го прозрачен, за да няма черен квадрат */
+    background: transparent;
+    display: inline-block;
 }
 
 .step-text {
     font-size: 0.75rem;
-    color: #888;
+    color: #666;
     text-transform: uppercase;
+    font-weight: 600;
 }
 
-/* Active Step */
+/* ACTIVE STATE (Когато е стигнало до тук) */
 .step.active .step-icon {
-    background: #27ae60;
-    color: #fff;
+    color: #27ae60; /* Зелена икона */
+    text-shadow: 0 0 10px rgba(39, 174, 96, 0.5); /* Леко сияние */
 }
 
 .step.active .step-text {
     color: #fff;
-    font-weight: bold;
 }
 
 
@@ -1505,4 +1505,108 @@ textarea.form-control {
     .btn-home:hover {
         transform: scale(1.05);
         background-color: #ddd;
+    }
+
+
+
+
+/* =========================================
+   13. MINIMALIST FOOTER (FULL WIDTH)
+   ========================================= */
+
+.footer-minimal {
+    background-color: #0c0c0c;
+    border-top: 1px solid #222;
+    padding: 30px 0; /* Височина */
+    color: #666;
+    width: 100%;
+}
+
+.footer-brand-min {
+    font-weight: 900;
+    font-size: 2rem; /* Голямо лого */
+    color: #fff;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    display: inline-block;
+}
+
+.footer-copy-min {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.footer-links-min a {
+    color: #aaa;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: color 0.2s;
+    margin-left: 20px; /* Разстояние между линковете */
+}
+
+    .footer-links-min a:hover {
+        color: #fff;
+    }
+
+.footer-separator {
+    color: #333;
+    margin: 0 5px;
+    font-size: 1rem;
+}
+
+
+
+
+
+/* =========================================
+   14. Css за банера да се приемат бисквитките
+   ========================================= */
+
+.cookie-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #1a1a1a; /* Тъмно сиво */
+    border-top: 2px solid #c0392b; /* Червена линия за акцент */
+    color: #fff;
+    padding: 30px 0;
+    z-index: 9999; /* Най-отгоре на всичко */
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+    animation: slideUp 0.5s ease-out;
+}
+
+
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+.cookie-text {
+    font-size: 1.2rem;
+    line-height: 1.5;
+    color: #bbb;
+    /* Предотвратява рязането на думи */
+    word-spacing: 1px;
+}
+
+/* Правим бутона по-голям и масивен */
+#acceptCookiesBtn {
+    font-size: 1rem;
+    letter-spacing: 1px;
+    min-width: 180px; /* Гарантираме, че няма да е малък */
+    transition: all 0.3s ease;
+}
+
+    #acceptCookiesBtn:hover {
+        background-color: #ddd;
+        transform: scale(1.05);
     }

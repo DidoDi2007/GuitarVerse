@@ -171,13 +171,27 @@
         </main>
     </div>
 
-    <!-- Footer (Опростен за момента) -->
-    <footer class="border-top footer text-muted bg-black">
-        <div class="container text-center text-white">
-            &copy; 2025 - GuitarVerse - <a asp-controller="Home" asp-action="Privacy" class="text-white">Privacy - </a>
+    <footer class="footer-minimal">
+        <!-- container-fluid: Разпъва до край. px-5: Дава малко въздух отстрани -->
+        <div class="container-fluid px-5">
+            <div class="row align-items-center">
 
+                <!-- ЛЯВО: Лого и Copyright (Залепено вляво) -->
+                <div class="col-md-6 text-start">
+                    <a asp-controller="Home" asp-action="Index" class="footer-brand-min">GUITARVERSE</a>
+                    <div class="footer-copy-min mt-2">
+                        &copy; @DateTime.Now.Year All rights reserved.
+                    </div>
+                </div>
 
-            <a asp-controller="Support" asp-action="Contact" class="text-white">Contact Us</a>
+                <!-- ДЯСНО: Линкове (Залепено вдясно) -->
+                <div class="col-md-6 text-end footer-links-min">
+                    <a asp-controller="Support" asp-action="Contact">Contact Support</a>
+                    <span class="footer-separator">•</span>
+                    <a asp-controller="Home" asp-action="Privacy">Privacy Policy</a>
+                </div>
+
+            </div>
         </div>
     </footer>
 
@@ -185,5 +199,56 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+
+
+    <!-- ==========================
+         COOKIE CONSENT BANNER
+    =========================== -->
+    <div id="cookieConsentBanner" class="cookie-banner" style="display: none;">
+        <div class="container">
+            <!-- Използваме Grid (row) вместо чист Flex за по-добър контрол -->
+            <div class="row align-items-center">
+
+                <!-- Текстът заема 9 от 12 части на широки екрани -->
+                <div class="col-md-9 text-start mb-3 mb-md-0">
+                    <h5 class="fw-bold text-uppercase mb-2">
+                        <i class="fa-solid fa-cookie-bite text-warning me-2"></i> We use cookies
+                    </h5>
+                    <p class="m-0 cookie-text">
+                        GuitarVerse uses cookies to ensure you get the best experience, including cart functionality and secure checkout.
+                        By continuing, you agree to our <a asp-controller="Home" asp-action="Privacy" class="text-white fw-bold">Privacy Policy.</a>
+                    </p>
+                </div>
+
+                <!-- Бутонът заема 3 от 12 части и го подравняваме вдясно -->
+                <div class="col-md-3 text-md-end text-center">
+                    <button id="acceptCookiesBtn" class="btn btn-light fw-bold text-uppercase px-5 py-3 rounded-0 text-nowrap border-0 shadow">
+                        I Agree
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- JS ЗА ЛОГИКАТА -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // 1. Проверяваме дали вече има съгласие
+            if (!localStorage.getItem("guitarverse_cookies_accepted")) {
+                // Ако няма - показваме банера
+                document.getElementById("cookieConsentBanner").style.display = "block";
+            }
+
+            // 2. Слушаме за клик на бутона
+            document.getElementById("acceptCookiesBtn").addEventListener("click", function() {
+                // Записваме съгласието в браузъра на клиента
+                localStorage.setItem("guitarverse_cookies_accepted", "true");
+
+                // Скриваме банера
+                document.getElementById("cookieConsentBanner").style.display = "none";
+            });
+        });
+    </script>
 </body>
 </html>

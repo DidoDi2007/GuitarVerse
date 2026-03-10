@@ -4,7 +4,7 @@
     ViewData["Title"] = "Home Page";
 
     // Тук дефинираме снимката. По-късно този линк ще идва от Базата Данни (Model.HeroImage)
-    var heroImage = "/images/mainpage/b202e464-07a2-49e3-a962-23d8de41c5c9.jpg";
+    var heroImage = "/images/mainpage/ChatGPT Image Feb 19, 2026, 02_05_23 PM.png";
 }
 
 <!-- 1. HERO SECTION -->
@@ -127,7 +127,6 @@
                     <div class="card-body d-flex flex-column">
                         <h6 class="card-subtitle mb-2 text-muted text-uppercase small">@product.Brand</h6>
 
-                        <!-- Заглавие (използва новия CSS клас) -->
                         <h5 class="card-title text-white home-product-title">
                             <a href="@Url.Action("Details", "Shop", new { id = product.ProductID })" class="text-white text-decoration-none stretched-link">
                                 @product.Name
@@ -135,7 +134,21 @@
                         </h5>
 
                         <div class="mt-auto pt-2">
-                            <p class="card-text fw-bold text-danger fs-5">@product.Price.ToString("N0") €</p>
+                            <p class="card-text fw-bold text-danger fs-5 mb-1">@product.Price.ToString("N0") €</p>
+
+                            <!-- ТУК Е ДОБАВКАТА -->
+                            @if (product.Stock > 0)
+                            {
+                                <div class="small text-success fw-bold text-uppercase" style="font-size: 0.7rem; letter-spacing: 1px;">
+                                    <i class="fa-solid fa-check-circle"></i> In Stock
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="small text-secondary fw-bold text-uppercase" style="font-size: 0.7rem; letter-spacing: 1px;">
+                                    <i class="fa-solid fa-circle-xmark"></i> Out of Stock
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>

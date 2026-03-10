@@ -3,6 +3,7 @@
     ViewData["Title"] = "My Orders";
 }
 
+
 <div class="profile-wrapper">
     <div class="container">
         <h2 class="text-uppercase fw-bold mb-4">My Order History</h2>
@@ -21,6 +22,8 @@
                 {
                     <div class="col-12 mb-4">
                         <div class="card bg-dark border-secondary">
+
+                            <!-- HEADER -->
                             <div class="card-header border-secondary d-flex justify-content-between align-items-center py-3">
                                 <div>
                                     <span class="text-muted small text-uppercase">Order Placed</span><br>
@@ -36,18 +39,19 @@
                                 </div>
                             </div>
 
-                            <div class="card-body">
-                                <!-- Status Steps Logic -->
+                            <div class="card-body" style="background-color: #212529;">
+                                <!-- Задаваме цвят, за да пасне на иконите -->
+                                <!-- STATUS TRACKER -->
                                 @{
-                                    var status = order.Status; // Paid, Shipped, Delivered
+                                    var status = order.Status;
                                     var isPaid = true;
                                     var isShipped = status == "Shipped" || status == "Delivered";
                                     var isDelivered = status == "Delivered";
                                 }
 
-                                <div class="steps">
+                                <div class="steps px-3">
                                     <div class="step @(isPaid ? "active" : "")">
-                                        <div class="step-icon"><i class="fa-solid fa-check"></i></div>
+                                        <div class="step-icon"><i class="fa-solid fa-check-circle"></i></div>
                                         <div class="step-text">Paid</div>
                                     </div>
                                     <div class="step @(isShipped ? "active" : "")">
@@ -60,40 +64,61 @@
                                     </div>
                                 </div>
 
-                                <hr class="border-secondary">
+                                <hr class="border-secondary my-4">
 
-                                <div class="row align-items-center">
-                                    <div class="col-md-8">
+                                <!-- PRODUCTS & TRACKING -->
+                                <div class="row">
+
+                                    <!-- ЛЯВО: Списък с продукти -->
+                                    <div class="col-md-8 border-end border-secondary">
+                                        <h6 class="text-uppercase text-muted small mb-3">Items in this shipment</h6>
+
                                         @foreach (var detail in order.OrderDetails)
                                         {
-                                            <div class="d-flex align-items-center mb-2">
-                                                <img src="@detail.Product.ImagePath" style="width: 50px; height: 50px; object-fit: contain; background: #fff; border-radius: 4px; padding: 2px;" class="me-3">
-                                                <div>
+                                            <div class="d-flex align-items-center mb-3">
+                                                <!-- Снимка -->
+                                                <img src="@detail.Product.ImagePath" style="width: 60px; height: 60px; object-fit: contain; background: #fff; border-radius: 4px; padding: 2px;" class="me-3">
+
+                                                <!-- Име и Бройка -->
+                                                <div class="flex-grow-1">
                                                     <div class="fw-bold text-white">@detail.Product.Name</div>
-                                                    <div class="text-muted small">Qty: @detail.Quantity</div>
+                                                    <div class="text-muted small">Brand: @detail.Product.Brand</div>
+                                                </div>
+
+                                                <!-- ЦЕНА И БРОЙКА (НОВО) -->
+                                                <div class="text-end ms-3">
+                                                    <div class="fw-bold text-white">@detail.Price.ToString("N2") €</div>
+                                                    <div class="text-muted small">x @detail.Quantity</div>
                                                 </div>
                                             </div>
                                         }
                                     </div>
-                                    <div class="col-md-4 text-end">
+
+                                    <!-- ДЯСНО: Проследяване -->
+                                    <div class="col-md-4 ps-md-4 mt-3 mt-md-0 d-flex flex-column justify-content-center">
                                         @if (!string.IsNullOrEmpty(order.TrackingNumber))
                                         {
-                                            <div class="mb-2">
-                                                <small class="text-muted">Tracking #:</small><br>
-                                                <span class="text-info font-monospace">@order.TrackingNumber</span>
-                                            </div>
+                                            <div class="text-center">
+                                                <div class="mb-3">
+                                                    <small class="text-muted text-uppercase">Tracking Number</small><br>
+                                                    <span class="fs-5 font-monospace text-info">@order.TrackingNumber</span>
+                                                </div>
 
-                                            <!-- Бутонът вече не е линк, а отваря Модален прозорец -->
-                                            <button onclick="showTrackingDemo('@order.TrackingNumber')" class="btn btn-sm btn-outline-light">
-                                                <i class="fa-solid fa-truck-fast me-2"></i> Track Package
-                                            </button>
+                                                <button onclick="showTrackingDemo('@order.TrackingNumber')" class="btn btn-outline-light w-100">
+                                                    <i class="fa-solid fa-magnifying-glass-location me-2"></i> Track Package
+                                                </button>
+                                            </div>
                                         }
                                         else
                                         {
-                                            <span class="badge bg-secondary">Processing</span>
+                                            <div class="text-center text-muted py-3">
+                                                <i class="fa-solid fa-box-archive fa-2x mb-2"></i><br>
+                                                <span>Processing Order...</span>
+                                            </div>
                                         }
                                     </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -103,8 +128,6 @@
             <div class="mt-4">
                 <a href="@Url.Action("Index")" class="btn btn-outline-secondary">Back to Profile</a>
             </div>
-
-
         }
 
         <!-- DEMO TRACKING MODAL -->
