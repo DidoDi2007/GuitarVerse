@@ -1,0 +1,106 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+passwordCriteria {
+    margin: 10px;
+}
+
+.btn-hover {
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-hover:hover {
+    background-color: #333 !important;
+    color: #fff !important;
+    transform: scale(1.02);
+}
+
+.nav-tabs .nav-link.active {
+    background-color: #000;
+    color: #fff;
+    border-radius: 0;
+}
+
+.nav-tabs .nav-link {
+    color: #333;
+    transition: all 0.2s ease-in-out;
+}
+
+.nav-tabs .nav-link:hover {
+    background-color: #f8f9fa;
+}
+
+/* Center the forgot-password page */
+.forgot-container {
+    min-height: 80vh;
+}
+
+/* Card sizing */
+.forgot-card {
+    width: 400px;
+}
+
+/* Login/Register page layout */
+.auth-container {
+    min-height: 80vh;
+    background-color: #f0f0f0;
+}
+
+/* Main card */
+.auth-card {
+    width: 400px;
+    background-color: #ffffff;
+    border-radius: 12px;
+}
+
+/* Icon above the tabs */
+.auth-icon {
+    font-size: 2rem;
+}
+
+/* Hover effect for buttons */
+.btn-hover:hover {
+    opacity: 0.9;
+    transform: scale(1.02);
+    transition: 0.2s ease;
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+/* Shared container for auth pages */
+.auth-container {
+    min-height: 80vh;
+}
+
+/* Shared card styling */
+.auth-card {
+    width: 400px;
+    border-radius: 12px;
+}
+
+.auth-container {
+    min-height: 80vh;
+}
+
+.auth-card {
+    width: 400px;
+    border-radius: 12px;
+}

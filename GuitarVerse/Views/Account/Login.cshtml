@@ -1,0 +1,83 @@
+﻿@{
+    ViewData["Title"] = "Login / Register";
+}
+
+<div class="auth-container d-flex justify-content-center align-items-center">
+    <div class="auth-card card p-4 shadow">
+        <div class="text-center mb-3">
+            <span class="auth-icon">👤</span>
+            <h5 class="fw-bold">HAVE AN ACCOUNT?</h5>
+        </div>
+
+        <!-- Tabs -->
+        <ul class="nav nav-tabs mb-3" id="authTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link @(ViewBag.ActiveTab == "register" ? "" : "active")"
+                        id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button" role="tab">
+                    Log in
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link @(ViewBag.ActiveTab == "register" ? "active" : "")"
+                        id="register-tab" data-bs-toggle="tab" data-bs-target="#register" type="button" role="tab">
+                    Create an Account
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <!-- Login Tab -->
+            <div class="tab-pane fade @(ViewBag.ActiveTab == "register" ? "" : "show active")" id="login" role="tabpanel">
+                <form method="post" asp-action="Login">
+                    <label>Email</label>
+                    <input type="email" name="email" class="form-control mb-2" required />
+
+                    <label>Password</label>
+                    <input type="password" name="password" id="loginPassword" class="form-control mb-2" data-show-toggle="showLoginPassword" required />
+                    <input type="checkbox" id="showLoginPassword"> Show Password
+
+                    <div class="mb-2 text-end">
+                        <a asp-controller="Account" asp-action="ForgotPassword" class="text-decoration-none">Forgot your password?</a>
+                    </div>
+
+                    <button type="submit" class="btn btn-dark w-100 btn-hover">LOGIN</button>
+
+                    @if (ViewBag.LoginError != null)
+                    {
+                        <div class="text-danger mt-2">@ViewBag.LoginError</div>
+                    }
+                    @if (ViewBag.Success != null)
+                    {
+                        <div class="text-success mt-2">@ViewBag.Success</div>
+                    }
+                </form>
+            </div>
+
+            <!-- Register Tab -->
+            <div class="tab-pane fade @(ViewBag.ActiveTab == "register" ? "show active" : "")" id="register" role="tabpanel">
+                <form method="post" asp-action="Register">
+                    <label>Email</label>
+                    <input type="email" name="email" class="form-control mb-2" required />
+
+                    <label>Password</label>
+                    <input type="password" name="password" id="password" class="form-control mb-2" data-show-toggle="showPassword" required />
+
+                    <label>Confirm Password</label>
+                    <input type="password" name="confirmPassword" id="confirmPassword" class="form-control mb-2" data-show-toggle="showPassword" required />
+                    <input type="checkbox" id="showPassword"> Show Password
+
+                    <div id="passwordCriteria" class="text-muted mt-1 small">
+                        Minimum 8 characters, at least one uppercase letter and one number.
+                    </div>
+
+                    <button type="submit" class="btn btn-dark w-100 mt-2 btn-hover" id="registerButton" disabled>REGISTER</button>
+
+                    @if (ViewBag.RegisterError != null)
+                    {
+                        <div class="text-danger mt-2">@ViewBag.RegisterError</div>
+                    }
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
