@@ -1,0 +1,63 @@
+﻿@model List<GuitarVerse.Models.SupportMessage>
+@{
+    ViewData["Title"] = "Support Messages";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">Support Inbox</h2>
+    <div class="btn-group">
+        <a href="@Url.Action("Support", new { status = "All" })" class="btn btn-outline-dark @(ViewBag.CurrentStatus == "All" ? "active" : "")">All</a>
+        <a href="@Url.Action("Support", new { status = "New" })" class="btn btn-outline-dark @(ViewBag.CurrentStatus == "New" ? "active" : "")">Unread</a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>From</th>
+                    <th>Subject</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th class="text-end">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var msg in Model)
+                {
+                    <tr class="@(msg.Status == "New" ? "fw-bold bg-light" : "")">
+                        <td>
+                            @msg.SenderName<br>
+                            <span class="text-muted small fw-normal">@msg.SenderEmail</span>
+                        </td>
+                        <td>@msg.Subject</td>
+                        <td>@msg.CreatedAt.ToString("dd/MM HH:mm")</td>
+                        <td>
+                            @if (msg.Status == "New")
+                            {
+                                <span class="badge bg-danger">New</span>
+                            }
+                            else if (msg.Status == "Replied")
+                            {
+
+                                <span class="badge bg-success">Replied</span>
+                            }
+                            else
+                            {
+
+                                <span class="badge bg-secondary">Read</span>
+                            }
+                        </td>
+                        <td class="text-end">
+                            <a href="@Url.Action("MessageDetails", new { id = msg.MessageID })" class="btn btn-sm btn-dark">
+                                Open
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

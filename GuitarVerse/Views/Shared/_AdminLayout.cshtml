@@ -52,10 +52,17 @@
                     <i class="fa-solid fa-box-open"></i> Orders
                 </a>
 
+                <a href="@Url.Action("Reviews", "Admin")" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Reviews" ? "active" : "")">
+                    <i class="fa-solid fa-star-half-stroke"></i> Reviews
+                </a>
+
                 <a href="@Url.Action("Support", "Admin")" class="nav-link @(currentAction == "Support" ? "active" : "")">
                     <i class="fa-solid fa-envelope"></i> Messages
                 </a>
 
+                <a href="@Url.Action("PromoCodes", "Admin")" class="nav-link @(currentAction == "PromoCodes" ? "active" : "")">
+                    <i class="fa-solid fa-envelope"></i> PromoCodes
+                </a>
                 
 
 

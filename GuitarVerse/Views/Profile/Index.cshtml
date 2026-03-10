@@ -50,6 +50,14 @@
                     </a>
                 </div>
             }
+            else if (Context.Session.GetString("UserRole") == "superadmin")
+            {
+                <div class="col-12 text-center mt-4">
+                    <a href="@Url.Action("Dashboard", "Admin")" class="btn btn-warning px-5 py-3 rounded-0 text-uppercase fw-bold shadow-lg">
+                        <i class="fa-solid fa-screwdriver-wrench me-2"></i> Go to Admin Panel
+                    </a>
+                </div>
+            }
 
             <!-- 4. LOGOUT -->
             <div class="col-12 text-center mt-3">

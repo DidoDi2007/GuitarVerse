@@ -7,7 +7,14 @@ namespace GuitarVerse.Models
     {
         public List<CartItem> CartItems { get; set; }
 
-        // Изчисляваме общата сума автоматично
-        public decimal GrandTotal => CartItems.Sum(x => x.Quantity * x.Product.Price);
+        // Стара сума
+        public decimal SubTotal => CartItems.Sum(x => x.Quantity * x.Product.Price);
+
+        // Отстъпка
+        public int DiscountPercent { get; set; } = 0;
+        public string AppliedCode { get; set; }
+
+        // Нова сума (сметната)
+        public decimal GrandTotal => SubTotal - (SubTotal * DiscountPercent / 100);
     }
 }

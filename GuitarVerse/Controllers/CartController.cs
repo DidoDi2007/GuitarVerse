@@ -65,8 +65,54 @@ namespace GuitarVerse.Controllers
                 CartItems = cartItems
             };
 
+            // --- НОВО: ПРОВЕРКА ЗА ПРОМО КОД В СЕСИЯТА ---
+            var sessionCode = HttpContext.Session.GetString("PromoCode");
+            var sessionPercent = HttpContext.Session.GetInt32("PromoPercent");
+
+            if (!string.IsNullOrEmpty(sessionCode) && sessionPercent != null)
+            {
+                viewModel.AppliedCode = sessionCode;
+                viewModel.DiscountPercent = sessionPercent.Value;
+            }
+            // ----------------------------------------------
+
             return View(viewModel);
         }
+
+
+        // 2. ПРИЛАГАНЕ НА КОД (POST)
+        [HttpPost]
+        public async Task<IActionResult> ApplyPromo(string code)
+        {
+            if (string.IsNullOrEmpty(code)) return RedirectToAction("Index");
+
+            // Търсим кода в базата
+            var promo = await _context.PromoCodes
+                .FirstOrDefaultAsync(p => p.Code == code.ToUpper() && p.IsActive);
+
+            if (promo != null)
+            {
+                // Запазваме в сесията
+                HttpContext.Session.SetString("PromoCode", promo.Code);
+                HttpContext.Session.SetInt32("PromoPercent", promo.DiscountPercent);
+                TempData["Success"] = "Promo code applied!";
+            }
+            else
+            {
+                TempData["Error"] = "Invalid promo code.";
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        // 3. ПРЕМАХВАНЕ НА КОД
+        public IActionResult RemovePromo()
+        {
+            HttpContext.Session.Remove("PromoCode");
+            HttpContext.Session.Remove("PromoPercent");
+            return RedirectToAction("Index");
+        }
+
 
         // 2. ДОБАВЯНЕ В КОЛИЧКАТА (ВЕЧЕ РАБОТИ ЗА ГОСТИ)
         [HttpPost]

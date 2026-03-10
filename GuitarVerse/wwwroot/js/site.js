@@ -249,3 +249,40 @@ setupPasswordValidation(
 function updateCharCount(field) {
     document.getElementById('charCount').innerText = field.value.length + " /900";
 }
+
+// ------------------------------
+// Бутон за проследяване на поръчката
+// ------------------------------
+
+function showTrackingDemo(trackingNum) {
+    // 1. Слагаме номера в модала
+    document.getElementById('modalTrackingNum').innerText = trackingNum;
+
+    // 2. Показваме модала чрез Bootstrap
+    var myModal = new bootstrap.Modal(document.getElementById('trackingModal'));
+    myModal.show();
+}
+
+
+// ------------------------------
+// Бутон за изтриване на профила
+// ------------------------------
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const input = document.getElementById('deleteConfirmationInput');
+    const btn = document.getElementById('finalDeleteBtn');
+
+    input.addEventListener('input', function () {
+        // Проверяваме дали въведеният текст е точно "DELETE"
+        if (this.value === 'DELETE') {
+            btn.disabled = false; // Отключваме бутона
+            btn.classList.add('pulse-animation'); // Опционално: ефект
+        } else {
+            btn.disabled = true;  // Заключваме бутона
+            btn.classList.remove('pulse-animation');
+        }
+    });
+});
+        

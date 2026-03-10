@@ -1,0 +1,83 @@
+﻿@model List<GuitarVerse.Models.Review>
+@{
+    ViewData["Title"] = "Manage Reviews";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">Reviews Moderation</h2>
+    <span class="badge bg-secondary fs-6">Total: @Model.Count</span>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>User</th>
+                    <th>Rating</th>
+                    <th style="width: 40%;">Comment</th> <!-- По-широка колона за текста -->
+                    <th>Date</th>
+                    <th class="text-end">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var review in Model)
+                {
+                    <tr>
+                        <!-- PRODUCT -->
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img src="@review.Product.ImagePath" style="width: 40px; height: 40px; object-fit: contain; margin-right: 10px; background: #fff; border: 1px solid #eee;">
+                                <span class="fw-bold small">@review.Product.Name</span>
+                            </div>
+                        </td>
+
+                        <!-- USER -->
+                        <td class="small text-muted">
+                            @review.User.Email
+                        </td>
+
+                        <!-- RATING (Звезди) -->
+                        <td class="text-warning small">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                if (i <= review.Rating) { <i class="fa-solid fa-star"></i> }
+                                else { <i class="fa-regular fa-star text-muted"></i> }
+                            }
+                        </td>
+
+                        <!-- COMMENT -->
+                        <td>
+                            <small class="text-secondary" title="@review.Comment">
+                                <!-- Показваме само първите 100 символа -->
+                                @if (review.Comment.Length > 100)
+                                {
+                                    @review.Comment.Substring(0, 100) <span class="text-primary">...</span>
+                                }
+                                else
+                                {
+                                    @review.Comment
+                                }
+                            </small>
+                        </td>
+
+                        <!-- DATE -->
+                        <td class="small">@review.CreatedAt.ToShortDateString()</td>
+
+                        <!-- DELETE BUTTON -->
+                        <td class="text-end">
+                            <form asp-action="DeleteReview" method="post" onsubmit="return confirm('Delete this review?');">
+                                <input type="hidden" name="id" value="@review.ReviewID" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Remove Review">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

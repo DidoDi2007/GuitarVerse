@@ -131,12 +131,27 @@
             </div>
             <div class="mb-3">
                 <label class="form-label fw-bold">Detailed Specs (One per line)</label>
-                <textarea asp-for="Product.SpecsText" class="form-control" rows="8" placeholder="Body: Alder&#10;Neck: Maple&#10;Fretboard: Ebony&#10;..."></textarea>
+                @* <textarea asp-for="Product.SpecsText" class="form-control" rows="8" placeholder="Body: Alder&#10;Neck: Maple&#10;Fretboard: Ebony&#10;..."></textarea> *@
+                
+                <textarea name="Product.SpecsText"
+                          class="form-control"
+                          rows="8"
+                          placeholder="Body: Alder&#10;Neck: Maple&#10;Fretboard: Ebony&#10;..."
+                          required
+                          style="resize: vertical; max-height: 400px; min-height: 150px;"></textarea>
+
                 <div class="form-text">Enter each specification on a new line.</div>
             </div>
             <div class="mb-3">
                 <label class="form-label fw-bold">Full Overview</label>
-                <textarea asp-for="Product.Overview" class="form-control font-monospace" rows="6">....</textarea>
+                @* <textarea asp-for="Product.Overview" class="form-control font-monospace" rows="6">....</textarea> *@
+                <!-- ОГРАНИЧАВАНЕ НА ПОЛЕТО -->
+                <textarea name="Product.Overview"
+                          class="form-control font-monospace"
+                          rows="6"
+                          placeholder="...."
+                          required
+                          style="resize: vertical; max-height: 400px; min-height: 150px;"></textarea>
             </div>
 
             <div class="text-end pt-3">

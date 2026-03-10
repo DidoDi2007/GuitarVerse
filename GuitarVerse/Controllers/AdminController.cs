@@ -1,8 +1,9 @@
-﻿using GuitarVerse.Data;
+﻿using Ganss.Xss; // <--- ТОВА Е БИБЛИОТЕКАТА
+using GuitarVerse.Data;
 using GuitarVerse.Models;
+using GuitarVerse.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Ganss.Xss; // <--- ТОВА Е БИБЛИОТЕКАТА
 
 namespace GuitarVerse.Controllers
 {
@@ -11,7 +12,7 @@ namespace GuitarVerse.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _hostEnvironment;
 
-        public AdminController(ApplicationDbContext context, IWebHostEnvironment hostEnvironment)
+        public AdminController(ApplicationDbContext context, IWebHostEnvironment hostEnvironment, EmailService emailService)
         {
             _context = context;
             _hostEnvironment = hostEnvironment;
@@ -512,6 +513,152 @@ namespace GuitarVerse.Controllers
             return RedirectToAction("Users");
         }
 
+        // ==========================
+        // SUPPORT MESSAGES
+        // ==========================
+
+        // 1. СПИСЪК СЪОБЩЕНИЯ
+        public async Task<IActionResult> Support(string status = "All")
+        {
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+
+            var query = _context.SupportMessages.AsQueryable();
+
+            if (status == "New") query = query.Where(m => m.Status == "New");
+
+            var messages = await query.OrderByDescending(m => m.CreatedAt).ToListAsync();
+
+            ViewBag.CurrentStatus = status;
+            return View(messages);
+        }
+
+        // 2. ПРЕГЛЕД (ДЕТАЙЛИ)
+        public async Task<IActionResult> MessageDetails(int id)
+        {
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+
+            var message = await _context.SupportMessages.FindAsync(id);
+            if (message == null) return NotFound();
+
+            // Ако е "New", маркираме го като "Read" (прочетено)
+            if (message.Status == "New")
+            {
+                message.Status = "Read";
+                await _context.SaveChangesAsync();
+            }
+
+            return View(message);
+        }
+
+        // 3. ОТГОВОР (ПРАЩАНЕ НА ИМЕЙЛ)
+
+        [HttpPost]
+        public async Task<IActionResult> ReplyMessage(int id, string replyText, [FromServices] EmailService emailService)
+        {
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+
+            var message = await _context.SupportMessages.FindAsync(id);
+            if (message != null)
+            {
+                // 1. Записваме отговора в базата
+                message.ReplyText = replyText;
+                message.Status = "Replied";
+                await _context.SaveChangesAsync();
+
+                // 2. Пращаме Имейл на клиента
+                var subject = $"RE: {message.Subject} - GuitarVerse Support";
+                var body = $@"
+                <h3>Hello {message.SenderName},</h3>
+                <p>Thank you for contacting GuitarVerse support.</p>
+                <div style='background-color: #f9f9f9; padding: 15px; border-left: 4px solid #c0392b;'>
+                    {replyText}
+                </div>
+                <hr>
+                <p style='color:#888; font-size: 12px;'>Original Message:<br>{message.MessageText}</p>
+            ";
+
+                await emailService.SendEmailAsync(message.SenderEmail, subject, body);
+            }
+
+            return RedirectToAction("Support");
+        }
+
+        // ==========================
+        // REVIEWS MANAGEMENT
+        // ==========================
+
+        // 1. СПИСЪК С ВСИЧКИ РЕВЮТА
+        public async Task<IActionResult> Reviews()
+        {
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+
+            var reviews = await _context.Reviews
+                .Include(r => r.Product) // За да видим за кой продукт е
+                .Include(r => r.User)    // За да видим кой го е написал
+                .OrderByDescending(r => r.CreatedAt) // Най-новите най-горе
+                .ToListAsync();
+
+            return View(reviews);
+        }
+
+        // 2. ИЗТРИВАНЕ НА РЕВЮ
+        [HttpPost]
+        public async Task<IActionResult> DeleteReview(int id)
+        {
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+
+            var review = await _context.Reviews.FindAsync(id);
+            if (review != null)
+            {
+                _context.Reviews.Remove(review);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("Reviews");
+        }
+
+        // ==========================
+        // PROMO CODES
+        // ==========================
+
+        public async Task<IActionResult> PromoCodes()
+        {
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+            var codes = await _context.PromoCodes.ToListAsync();
+            return View(codes);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreatePromo(string code, int percent)
+        {
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+
+            if (!string.IsNullOrEmpty(code) && percent > 0 && percent <= 100)
+            {
+                var promo = new PromoCode
+                {
+                    Code = code.ToUpper(), // Винаги главни букви
+                    DiscountPercent = percent,
+                    IsActive = true
+                };
+                _context.PromoCodes.Add(promo);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction("PromoCodes");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeletePromo(int id)
+        {
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+            var promo = await _context.PromoCodes.FindAsync(id);
+            if (promo != null)
+            {
+                _context.PromoCodes.Remove(promo);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction("PromoCodes");
+        }
 
 
     }

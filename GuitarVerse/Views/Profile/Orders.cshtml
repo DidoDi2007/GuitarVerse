@@ -82,7 +82,11 @@
                                                 <small class="text-muted">Tracking #:</small><br>
                                                 <span class="text-info font-monospace">@order.TrackingNumber</span>
                                             </div>
-                                            <button class="btn btn-sm btn-outline-light">Track Package</button>
+
+                                            <!-- Бутонът вече не е линк, а отваря Модален прозорец -->
+                                            <button onclick="showTrackingDemo('@order.TrackingNumber')" class="btn btn-sm btn-outline-light">
+                                                <i class="fa-solid fa-truck-fast me-2"></i> Track Package
+                                            </button>
                                         }
                                         else
                                         {
@@ -99,6 +103,35 @@
             <div class="mt-4">
                 <a href="@Url.Action("Index")" class="btn btn-outline-secondary">Back to Profile</a>
             </div>
+
+
         }
+
+        <!-- DEMO TRACKING MODAL -->
+        <div class="modal fade" id="trackingModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-dark text-white border-secondary">
+                    <div class="modal-header border-secondary">
+                        <h5 class="modal-title fw-bold"><i class="fa-solid fa-cube text-warning me-2"></i>Project Demo</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center py-4">
+                        <i class="fa-solid fa-truck-fast fa-3x text-muted mb-3"></i>
+                        <h4 class="fw-bold">Package is in Transit</h4>
+                        <p class="text-muted">
+                            This is a demonstration environment. In a real-world scenario,
+                            this button would redirect to the courier's tracking page.
+                        </p>
+                        <div class="alert alert-info d-inline-block mt-2">
+                            Simulated Tracking #: <strong id="modalTrackingNum"></strong>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-secondary">
+                        <button type="button" class="btn btn-light w-100" data-bs-dismiss="modal">Understood</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+

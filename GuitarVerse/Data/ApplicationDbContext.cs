@@ -18,6 +18,7 @@ namespace GuitarVerse.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<PasswordReset> PasswordResets { get; set; }
+        public DbSet<PromoCode> PromoCodes { get; set; }
         public DbSet<SupportMessage> SupportMessages { get; set; }
     }
 }
